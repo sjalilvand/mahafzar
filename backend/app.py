@@ -25,7 +25,8 @@ from routes.forum import forum_ns
 from routes.payments import payments_ns
 from routes.recommendations import rec_ns
 from routes.ab_testing import ab_ns
-from routes.admin import admin_ns  # admin panel
+from routes.admin import admin_ns
+from routes.business import biz_ns  # admin panel
 
 def create_app():
     app = Flask(__name__)
@@ -86,6 +87,7 @@ def create_app():
               doc=(None if os.environ.get('FLASK_ENV') == 'production' else '/api/docs'))
 
     api.add_namespace(auth_ns, path='/api/auth')
+    api.add_namespace(biz_ns, path='/api/business')
     api.add_namespace(courses_ns, path='/api/courses')
     api.add_namespace(members_ns, path='/api/members')
     api.add_namespace(missions_ns, path='/api/missions')
@@ -270,3 +272,4 @@ if __name__ == '__main__':
     print("👤 admin/admin123  |  user/user123")
     print("="*50)
     socketio.run(app, debug=True, port=5000)
+
