@@ -38,3 +38,65 @@ select {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ============ MAHAI MODERN LAYER (auto-generated) ============ */
+.app-container, body {
+  font-family: 'Vazirmatn', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif !important;
+}
+h1, h2, h3 { letter-spacing: -0.01em; }
+
+/* --- contrast lift on dark theme --- */
+.theme-dark .text-gray-300 { color: #cbd5e1; }
+.theme-dark .text-gray-400 { color: #aeb9c9; }
+.theme-dark .text-gray-500 { color: #8f9bab; }
+
+/* --- glass header --- */
+.app-container header,
+.app-container nav.navbar,
+.app-container .navbar {
+  background: rgba(10, 10, 18, 0.62) !important;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+/* --- hero visual (radar) --- */
+.mh-hero-visual { width: 100%; max-width: 460px; margin-inline: auto; }
+.mh-radar { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; }
+.mh-ring { position: absolute; border: 1px solid rgba(34, 211, 238, 0.3); border-radius: 9999px; }
+.mh-sweep {
+  position: absolute; inset: 7%; border-radius: 9999px;
+  background: conic-gradient(from 0deg, rgba(34,211,238,.30), transparent 70deg, transparent 360deg);
+  mask-image: radial-gradient(circle, transparent 28%, black 30%);
+  -webkit-mask-image: radial-gradient(circle, transparent 28%, black 30%);
+}
+.mh-dot { position: absolute; inset: 12%; }
+.mh-dot i {
+  position: absolute; top: -4px; left: 50%;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #22d3ee; box-shadow: 0 0 14px #22d3ee;
+}
+.mh-dot-b { inset: 2%; }
+.mh-dot-b i { background: #6366f1; box-shadow: 0 0 14px #6366f1; }
+.mh-core {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 96px; height: 96px; border-radius: 26px;
+  color: #22d3ee;
+  background: linear-gradient(135deg, rgba(34,211,238,.12), rgba(99,102,241,.14));
+  border: 1px solid rgba(34,211,238,.35);
+}
+@media (max-width: 768px) { .mh-hero-visual { max-width: 300px; } }
+
+/* --- scrollbar / selection / focus --- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0b0f19; }
+::-webkit-scrollbar-thumb { background: #223047; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #2e405e; }
+::selection { background: rgba(34, 211, 238, 0.35); }
+:focus-visible { outline: 2px solid #22d3ee; outline-offset: 2px; border-radius: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+/* ============ END MAHAI MODERN LAYER ============ */

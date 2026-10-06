@@ -107,6 +107,15 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'jsdelivr-fonts-cache',
+          expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+          cacheableResponse: { statuses: [0, 200] }
+        }
+      },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
@@ -177,7 +186,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
-        advancedChunks: {
+        codeSplitting: {
           groups: [
             { name: 'react-vendor', test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/ },
             { name: 'vendor', test: /[\\/]node_modules[\\/]/ }
@@ -187,4 +196,6 @@ export default defineConfig({
     }
   }
 })
+
+
 
