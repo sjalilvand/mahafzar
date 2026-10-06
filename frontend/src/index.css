@@ -100,3 +100,18 @@ h1, h2, h3 { letter-spacing: -0.01em; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 /* ============ END MAHAI MODERN LAYER ============ */
+
+/* ==== MAHAI HERO UPGRADE (additive, safe) ==== */
+.hero-visual .ai-core { position: relative; }
+.hero-visual .ai-core::before {
+  content: ''; position: absolute; inset: -16%; border-radius: 9999px;
+  background: conic-gradient(from 0deg, rgba(0,242,255,.28), transparent 80deg, transparent 360deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 56%, black 58%);
+          mask-image: radial-gradient(circle, transparent 56%, black 58%);
+  animation: mhSweep 8s linear infinite; pointer-events: none;
+}
+@keyframes mhSweep { to { transform: rotate(360deg); } }
+.hero-visual .core-icon { filter: drop-shadow(0 0 16px rgba(0,242,255,.9)); }
+.hero-visual .orbit { border-color: rgba(0,242,255,.35); box-shadow: 0 0 10px rgba(0,242,255,.14), inset 0 0 10px rgba(0,242,255,.10); }
+@media (prefers-reduced-motion: reduce) { .hero-visual .ai-core::before { animation: none; } }
+/* ==== END MAHAI HERO UPGRADE ==== */
