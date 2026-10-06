@@ -74,7 +74,9 @@ const Navbar = () => {
             {languageLabel}
           </button>
 
-          <ThemeSwitcher />
+          <Link to="/support" className="nav-link">پشتیبانی</Link>
+        <Link to="/wallet" className="nav-link">کیف پول</Link>
+        <ThemeSwitcher />
           {user && <NotificationSystem />}
         </div>
 
@@ -123,3 +125,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
