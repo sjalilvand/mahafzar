@@ -33,6 +33,15 @@ def _is_admin(uid):
         return False
 
 
+def _user_email(uid):
+    try:
+        from models import User
+        u = db.session.get(User, uid)
+        return ((getattr(u, 'email', None)) or ('#' + str(uid))) if u else ('#' + str(uid))
+    except Exception:
+        return '#' + str(uid)
+
+
 class BizTicket(db.Model):
     __tablename__ = 'biz_tickets'
     id = db.Column(db.Integer, primary_key=True)
@@ -254,3 +263,56 @@ class WalletDepositConfirm(Resource):
         tx.note = 'شارژ کیف پول (پرداخت تایید شد)'
         db.session.commit()
         return {'message': 'کیف پول شارژ شد', 'ref_code': ref}, 200
+
+
+# ---------------- ADMIN EXTRA (stats / transactions / password) ----------------
+@biz_ns.route('/admin/stats')
+class AdminStats(Resource):
+    @jwt_required()
+    def get(self):
+        if not _is_admin(_uid()):
+            return {'message': 'dastresi mojaz nist'}, 403
+        from models import User
+        open_t = BizTicket.query.filter_by(status='open').count()
+        total_t = BizTicket.query.count()
+        users = User.query.count()
+        deposits = BizWalletTx.query.filter_by(status='done').count()
+        volume = db.session.query(db.func.coalesce(db.func.sum(BizWalletTx.amount), 0)).filter_by(status='done').scalar()
+        return {'open_tickets': open_t, 'total_tickets': total_t, 'users': users,
+                'deposits': deposits, 'volume': int(volume or 0)}, 200
+
+
+@biz_ns.route('/admin/transactions')
+class AdminTransactions(Resource):
+    @jwt_required()
+    def get(self):
+        if not _is_admin(_uid()):
+            return {'message': 'dastresi mojaz nist'}, 403
+        rows = BizWalletTx.query.order_by(BizWalletTx.created_at.desc()).limit(300).all()
+        return {'transactions': [{'id': t.id, 'user': _user_email(t.user_id),
+                                  'amount': t.amount, 'kind': t.kind, 'status': t.status,
+                                  'note': t.note, 'ref_code': t.ref_code,
+                                  'created_at': t.created_at.isoformat()} for t in rows]}, 200
+
+
+@biz_ns.route('/admin/password')
+class AdminPassword(Resource):
+    @jwt_required()
+    def post(self):
+        if not _is_admin(_uid()):
+            return {'message': 'dastresi mojaz nist'}, 403
+        d = request.get_json(silent=True) or {}
+        cur = d.get('current_password') or ''
+        new = d.get('new_password') or ''
+        if len(new) < 8:
+            return {'message': 'رمز جدید باید حداقل ۸ کاراکتر باشد'}, 400
+        from models import User
+        from werkzeug.security import check_password_hash, generate_password_hash
+        u = db.session.get(User, _uid())
+        if not u:
+            return {'message': 'کاربر یافت نشد'}, 404
+        if not check_password_hash(u.password_hash, cur):
+            return {'message': 'رمز فعلی اشتباه است'}, 401
+        u.password_hash = generate_password_hash(new)
+        db.session.commit()
+        return {'message': 'رمز عبور با موفقیت تغییر کرد'}, 200

@@ -74,7 +74,10 @@ const Navbar = () => {
             {languageLabel}
           </button>
 
-          <Link to="/support" className="nav-link">پشتیبانی</Link>
+          {user && (user.role === 'admin' || user.is_admin) && (
+          <Link to="/admin/business" className="nav-link" style={{ color: '#22d3ee' }}>مدیریت تجاری</Link>
+        )}
+        <Link to="/support" className="nav-link">پشتیبانی</Link>
         <Link to="/wallet" className="nav-link">کیف پول</Link>
         <ThemeSwitcher />
           {user && <NotificationSystem />}
@@ -125,4 +128,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 

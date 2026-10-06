@@ -29,6 +29,7 @@ import Settings from './pages/Settings';
 import QuizPlayer from './components/quiz/QuizPlayer';
 import Support from './pages/Support';
 import Wallet from './pages/Wallet';
+import AdminBusiness from './pages/admin/AdminBusiness';
 import './App.css';
 
 function App() {
@@ -97,6 +98,7 @@ function App() {
           <Route path="/quiz/:quizId" element={<QuizPlayer />} />
                 <Route path="/support" element={<Support />} />
         <Route path="/wallet" element={<Wallet />} />
+              <Route path="/admin/business" element={<AdminBusiness />} />
       </Routes>
       </main>
       <Footer />
@@ -108,3 +110,4 @@ function App() {
 }
 
 export default App;
+
