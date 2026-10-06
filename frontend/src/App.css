@@ -1211,3 +1211,34 @@ html {
   color: var(--text-muted);
   cursor: pointer;
 }
+/* ============ MAHAI MODERN LAYER ============ */
+.app-container, body { font-family: 'Vazirmatn', ui-sans-serif, system-ui, 'Segoe UI', Tahoma, sans-serif !important; }
+.theme-dark .text-gray-300 { color: #cbd5e1; }
+.theme-dark .text-gray-400 { color: #aeb9c9; }
+.app-container header, .app-container nav.navbar, .app-container .navbar {
+  background: rgba(10,10,18,.62) !important;
+  backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid rgba(148,163,184,.12);
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0b0f19; }
+::-webkit-scrollbar-thumb { background: #223047; border-radius: 8px; }
+::selection { background: rgba(34,211,238,.35); }
+:focus-visible { outline: 2px solid #22d3ee; outline-offset: 2px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+/* ============ END MAHAI MODERN LAYER ============ */
+
+/* ==== MAHAI HERO UPGRADE ==== */
+.hero-visual .ai-core { position: relative; }
+.hero-visual .ai-core::before {
+  content: ''; position: absolute; inset: -16%; border-radius: 9999px;
+  background: conic-gradient(from 0deg, rgba(0,242,255,.28), transparent 80deg, transparent 360deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 56%, black 58%);
+          mask-image: radial-gradient(circle, transparent 56%, black 58%);
+  animation: mhSweep 8s linear infinite; pointer-events: none;
+}
+@keyframes mhSweep { to { transform: rotate(360deg); } }
+.hero-visual .core-icon { filter: drop-shadow(0 0 16px rgba(0,242,255,.9)); }
+.hero-visual .orbit { border-color: rgba(0,242,255,.35); box-shadow: 0 0 10px rgba(0,242,255,.14), inset 0 0 10px rgba(0,242,255,.10); }
+@media (prefers-reduced-motion: reduce) { .hero-visual .ai-core::before { animation: none; } }
+/* ==== END MAHAI HERO UPGRADE ==== */
