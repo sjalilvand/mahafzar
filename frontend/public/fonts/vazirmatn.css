@@ -1,0 +1,9 @@
+/* Vazirmatn variable font - self-hosted */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('./Vazirmatn-var.woff2') format('woff2-variations'),
+       url('./Vazirmatn-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

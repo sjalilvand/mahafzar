@@ -1246,3 +1246,21 @@ html {
 /* ==== MAHAI RENDER PERF ==== */
 .section { content-visibility: auto; contain-intrinsic-size: auto 700px; }
 /* ==== END RENDER PERF ==== */
+
+/* ==== MAHAI BUSINESS UI ==== */
+.biz-page { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
+.biz-card { background: rgba(255,255,255,.04); border: 1px solid rgba(148,163,184,.16); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+.biz-title { color: #e2e8f0; font-size: 24px; font-weight: 700; margin: 0 0 4px; }
+.biz-sub { color: #94a3b8; font-size: 13px; margin: 0 0 18px; }
+.biz-input, .biz-select, .biz-textarea { width: 100%; background: rgba(10,15,30,.6); border: 1px solid rgba(148,163,184,.25); color: #e2e8f0; border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 14px; margin: 6px 0 12px; box-sizing: border-box; }
+.biz-textarea { min-height: 90px; resize: vertical; }
+.biz-btn { background: linear-gradient(135deg,#22d3ee,#6366f1); color: #04121d; border: none; border-radius: 10px; padding: 10px 20px; font-weight: 700; font-family: inherit; cursor: pointer; }
+.biz-btn:disabled { opacity: .5; cursor: not-allowed; }
+.biz-chip { display: inline-block; border-radius: 20px; padding: 3px 10px; font-size: 12px; white-space: nowrap; }
+.biz-open { background: rgba(34,211,238,.15); color: #22d3ee; }
+.biz-answered { background: rgba(99,102,241,.18); color: #a5b4fc; }
+.biz-closed { background: rgba(100,116,139,.2); color: #94a3b8; }
+.biz-msg { border-inline-start: 3px solid rgba(148,163,184,.3); padding: 8px 12px; margin: 8px 0; border-radius: 8px; background: rgba(255,255,255,.03); }
+.biz-msg-admin { border-inline-start-color: #6366f1; }
+.biz-balance { font-size: 32px; font-weight: 800; color: #22d3ee; }
+/* ==== END BUSINESS UI ==== */

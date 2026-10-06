@@ -27,6 +27,8 @@ import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
 import QuizPlayer from './components/quiz/QuizPlayer';
+import Support from './pages/Support';
+import Wallet from './pages/Wallet';
 import './App.css';
 
 function App() {
@@ -93,7 +95,9 @@ function App() {
 
           {/* Quiz - standalone player (modal usage handled inside Courses) */}
           <Route path="/quiz/:quizId" element={<QuizPlayer />} />
-        </Routes>
+                <Route path="/support" element={<Support />} />
+        <Route path="/wallet" element={<Wallet />} />
+      </Routes>
       </main>
       <Footer />
       <ChatWidget />
