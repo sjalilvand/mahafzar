@@ -1,0 +1,15 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+dev-dist/
+.env
+.env.*
+!.env.example
+_Analysis_Reports/
+.idea/
+.vscode/
+*.log
+*.zip

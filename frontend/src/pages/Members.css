@@ -1,0 +1,138 @@
+/* ===== MEMBERS PAGE STYLES ===== */
+.members-page {
+  min-height: 100vh;
+}
+
+.members-hero {
+  padding: 80px 20px 40px;
+  text-align: center;
+}
+
+.members-hero h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  background: linear-gradient(135deg, #fff, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 15px;
+}
+
+.members-hero p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.members-grid-section {
+  padding: 40px 20px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.member-card {
+  background: var(--surface);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s;
+}
+
+.member-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 20px 60px rgba(0, 242, 255, 0.3);
+}
+
+.member-avatar {
+  height: 250px;
+  background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), rgba(77, 77, 255, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.member-avatar img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary);
+}
+
+.member-info {
+  padding: 25px;
+  text-align: center;
+}
+
+.member-info h3 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.member-position {
+  display: block;
+  color: var(--primary);
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+}
+
+.member-department {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.member-bio {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.member-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.skill-tag {
+  padding: 4px 12px;
+  background: rgba(0, 242, 255, 0.1);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: var(--primary);
+}
+
+.member-social {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.member-social a {
+  color: var(--text-muted);
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.member-social a:hover {
+  color: var(--primary);
+  background: rgba(0, 242, 255, 0.1);
+}

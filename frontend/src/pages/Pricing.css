@@ -1,0 +1,266 @@
+/* ===== PRICING PAGE ===== */
+.pricing-page {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pricing-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.pricing-header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #fff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 15px;
+}
+
+.pricing-header p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+}
+
+/* Plan Grid */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.plan-card {
+  padding: 35px 30px;
+  text-align: center;
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.plan-card.popular {
+  border: 2px solid var(--primary);
+  transform: scale(1.03);
+  box-shadow: var(--glow);
+}
+
+.popular-badge {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  color: #000;
+  padding: 6px 25px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.plan-icon {
+  margin: 25px 0 15px;
+}
+
+.plan-name {
+  font-size: 1.6rem;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.plan-description {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  min-height: 45px;
+}
+
+.plan-price {
+  margin-bottom: 5px;
+}
+
+.price-amount {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 5px;
+}
+
+.price-currency {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.price-duration {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.plan-monthly {
+  background: rgba(255,255,255,0.03);
+  padding: 8px 15px;
+  border-radius: 20px;
+  color: var(--primary);
+  font-size: 0.9rem;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.plan-features {
+  text-align: right;
+  margin: 25px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.plan-btn {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  background: transparent;
+  color: #fff;
+  font-weight: bold;
+  font-family: inherit;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.plan-btn:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.plan-btn.primary {
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  border: none;
+  color: #000;
+}
+
+.plan-btn.primary:hover {
+  box-shadow: var(--glow);
+  transform: translateY(-2px);
+}
+
+/* Discount Section */
+.discount-section {
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.discount-section h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.discount-input-group {
+  display: flex;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.discount-input-group input {
+  flex: 1;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.discount-input-group button {
+  padding: 12px 25px;
+  background: var(--primary);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.discount-result {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.discount-result.success {
+  color: #0f0;
+}
+
+.discount-result.error {
+  color: #ff4444;
+}
+
+/* Comparison Table */
+.features-comparison {
+  padding: 30px;
+  overflow-x: auto;
+}
+
+.features-comparison h3 {
+  color: #fff;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+th {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+td:first-child {
+  text-align: right;
+  color: var(--text);
+}
+
+.not-available {
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-card.popular {
+    transform: none;
+  }
+}

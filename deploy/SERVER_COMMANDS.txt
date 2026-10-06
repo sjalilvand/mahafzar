@@ -1,0 +1,15 @@
+# ===== دستورات سرور Ubuntu (به ترتیب) =====
+sudo apt update && sudo apt install -y python3-venv python3-pip nginx certbot python3-certbot-nginx
+sudo mkdir -p /var/www/mahai/backend /var/www/mahai/frontend
+# آپلود mahai_release.zip و باز کردن در /var/www/mahai
+cd /var/www/mahai/backend
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+cp .env.example .env && nano .env        # مقادیر واقعی + FLASK_ENV=production + BIND_HOST=127.0.0.1 + URL_SCHEME=https
+sudo cp /var/www/mahai/deploy/mahai-backend.service /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now mahai-backend
+sudo cp /var/www/mahai/deploy/nginx-mahai.conf /etc/nginx/sites-available/mahai.conf
+sudo ln -sf /etc/nginx/sites-available/mahai.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+# اول SSL بگیرید (قبل از nginx.conf چون هنوز سرتیفیکیت نیست، موقتا خط listen 443 را کامنت کنید):
+sudo certbot --nginx -d mahai.ir -d www.mahai.ir
+# تست: https://mahai.ir  و  https://mahai.ir/api/docs

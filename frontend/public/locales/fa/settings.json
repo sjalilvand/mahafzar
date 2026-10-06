@@ -1,0 +1,87 @@
+{
+  "title": "تنظیمات",
+  "appearance": {
+    "title": "ظاهر",
+    "theme": "تم",
+    "themes": {
+      "dark": "تاریک",
+      "light": "روشن",
+      "cyberpunk": "سایبرپانک",
+      "nature": "طبیعت",
+      "ocean": "اقیانوس",
+      "sunset": "غروب"
+    },
+    "font": "فونت",
+    "font_size": "اندازه فونت",
+    "font_sizes": {
+      "small": "کوچک",
+      "medium": "متوسط",
+      "large": "بزرگ",
+      "xlarge": "خیلی بزرگ"
+    },
+    "density": "تراکم",
+    "densities": {
+      "compact": "فشرده",
+      "comfortable": "راحت",
+      "spacious": "جادار"
+    },
+    "animations": "انیمیشن‌ها",
+    "reduced_motion": "کاهش حرکت"
+  },
+  "language": {
+    "title": "زبان و منطقه",
+    "language": "زبان",
+    "languages": {
+      "fa": "فارسی",
+      "en": "English",
+      "ar": "العربية",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español"
+    },
+    "direction": "جهت",
+    "calendar": "تقویم",
+    "calendars": {
+      "jalali": "شمسی",
+      "gregorian": "میلادی",
+      "hijri": "قمری"
+    },
+    "number_format": "فرمت اعداد",
+    "first_day": "اول هفته"
+  },
+  "notifications": {
+    "title": "اعلان‌ها",
+    "email": "اعلان ایمیلی",
+    "push": "اعلان Push",
+    "sms": "اعلان پیامکی",
+    "desktop": "اعلان دسکتاپ",
+    "sound": "صدا",
+    "vibration": "لرزش",
+    "quiet_hours": "ساعات سکوت",
+    "digest": "خلاصه روزانه",
+    "types": {
+      "new_course": "دوره جدید",
+      "new_comment": "نظر جدید",
+      "forum_reply": "پاسخ در انجمن",
+      "badge_earned": "نشان جدید",
+      "level_up": "ارتقاء سطح",
+      "payment": "پرداخت",
+      "system": "سیستمی"
+    }
+  },
+  "privacy": {
+    "title": "حریم خصوصی",
+    "profile_visibility": "نمایش پروفایل",
+    "visibilities": {
+      "public": "عمومی",
+      "members": "اعضا",
+      "private": "خصوصی"
+    },
+    "show_email": "نمایش ایمیل",
+    "show_location": "نمایش موقعیت",
+    "activity_status": "وضعیت فعالیت",
+    "searchable": "قابل جستجو",
+    "data_export": "دریافت داده‌ها",
+    "delete_account": "حذف حساب"
+  }
+}

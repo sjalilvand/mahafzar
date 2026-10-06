@@ -1,0 +1,15 @@
+# /etc/systemd/system/mahai-backend.service
+[Unit]
+Description=MahAI Backend (Flask + Waitress)
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/var/www/mahai/backend
+EnvironmentFile=/var/www/mahai/backend/.env
+ExecStart=/var/www/mahai/backend/.venv/bin/python run_waitress.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
