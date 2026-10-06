@@ -1242,3 +1242,7 @@ html {
 .hero-visual .orbit { border-color: rgba(0,242,255,.35); box-shadow: 0 0 10px rgba(0,242,255,.14), inset 0 0 10px rgba(0,242,255,.10); }
 @media (prefers-reduced-motion: reduce) { .hero-visual .ai-core::before { animation: none; } }
 /* ==== END MAHAI HERO UPGRADE ==== */
+
+/* ==== MAHAI RENDER PERF ==== */
+.section { content-visibility: auto; contain-intrinsic-size: auto 700px; }
+/* ==== END RENDER PERF ==== */

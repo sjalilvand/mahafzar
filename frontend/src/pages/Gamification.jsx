@@ -372,7 +372,7 @@ const Gamification = () => {
                         <span>#{idx + 1}</span>
                       )}
                     </div>
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={entry.avatar || '/default-avatar.png'}
                       alt={entry.name}
                       className="leaderboard-avatar"
@@ -468,3 +468,4 @@ const Gamification = () => {
 };
 
 export default Gamification;
+

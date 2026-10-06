@@ -129,7 +129,7 @@ const Courses = () => {
                   onClick={() => fetchCourseDetail(course.id)}
                 >
                   <div className="course-thumbnail">
-                    <img src={course.thumbnail_url || '/course-placeholder.jpg'} alt={course.title} />
+                    <img loading="lazy" decoding="async" src={course.thumbnail_url || '/course-placeholder.jpg'} alt={course.title} />
                     <span className="course-level">{course.level}</span>
                   </div>
                   <div className="course-info">
@@ -213,3 +213,4 @@ const Courses = () => {
 };
 
 export default Courses;
+

@@ -46,7 +46,7 @@ const Members = () => {
               whileHover={{ y: -10 }}
             >
               <div className="member-avatar">
-                <img
+                <img loading="lazy" decoding="async"
                   src={member.avatar_url || '/default-avatar.png'}
                   alt={member.name}
                 />
@@ -90,3 +90,4 @@ const Members = () => {
 };
 
 export default Members;
+

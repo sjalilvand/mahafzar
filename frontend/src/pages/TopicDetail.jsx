@@ -134,7 +134,7 @@ const TopicDetail = () => {
 
         <div className="topic-header-meta">
           <div className="author-info">
-            <img src={topic.author?.avatar || '/default-avatar.png'} alt="" />
+            <img loading="lazy" decoding="async" src={topic.author?.avatar || '/default-avatar.png'} alt="" />
             <div>
               <strong>{topic.author?.name}</strong>
               <span>{new Date(topic.created_at).toLocaleDateString('fa-IR')}</span>
@@ -161,7 +161,7 @@ const TopicDetail = () => {
             {/* Post Sidebar */}
             <div className="post-sidebar">
               <div className="post-author-avatar">
-                <img src={post.author?.avatar || '/default-avatar.png'} alt="" />
+                <img loading="lazy" decoding="async" src={post.author?.avatar || '/default-avatar.png'} alt="" />
               </div>
               <div className="post-author-info">
                 <strong>{post.author?.name}</strong>
@@ -274,3 +274,4 @@ const TopicDetail = () => {
 };
 
 export default TopicDetail;
+

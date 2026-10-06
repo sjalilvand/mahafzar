@@ -452,7 +452,7 @@ const AnalyticsDashboard = () => {
             {userEngagement.top_users.map((user, idx) => (
               <div key={idx} className="top-user-item">
                 <span className="rank">#{idx + 1}</span>
-                <img src={user.avatar || '/default-avatar.png'} alt={user.name} />
+                <img loading="lazy" decoding="async" src={user.avatar || '/default-avatar.png'} alt={user.name} />
                 <div className="user-detail">
                   <strong>{user.name}</strong>
                   <span>{user.activities} فعالیت</span>
@@ -470,3 +470,4 @@ const AnalyticsDashboard = () => {
 };
 
 export default AnalyticsDashboard;
+

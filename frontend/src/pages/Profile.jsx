@@ -207,7 +207,7 @@ const Profile = () => {
         <div className="profile-header">
           <div className="avatar-section">
             <div className="avatar-wrapper">
-              <img
+              <img loading="lazy" decoding="async"
                 src={profile.avatar_url || '/default-avatar.png'}
                 alt={profile.full_name}
                 className="profile-avatar"
@@ -598,3 +598,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

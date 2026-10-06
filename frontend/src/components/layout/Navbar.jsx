@@ -58,7 +58,7 @@ const Navbar = () => {
               {user.role === 'admin' && <Link to="/admin">{t('admin_panel')}</Link>}
               <button onClick={handleLogout} className="btn-nav">{t('logout')}</button>
               <Link to="/profile" className="user-avatar-mini">
-                <img src={user.avatar_url || '/default-avatar.png'} alt={user.full_name} />
+                <img loading="lazy" decoding="async" src={user.avatar_url || '/default-avatar.png'} alt={user.full_name} />
               </Link>
             </>
           ) : (

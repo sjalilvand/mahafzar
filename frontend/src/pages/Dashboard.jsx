@@ -70,7 +70,7 @@ const Dashboard = () => {
           {/* Sidebar */}
           <div className="dashboard-sidebar glass-card">
             <div className="user-info">
-              <img src={user.avatar_url || '/default-avatar.png'} className="user-avatar" alt="" />
+              <img loading="lazy" decoding="async" src={user.avatar_url || '/default-avatar.png'} className="user-avatar" alt="" />
               <h3>{user.full_name}</h3>
               <span className="user-role">{user.role === 'admin' ? 'مدیر' : 'کاربر'}</span>
               {myStats && (
@@ -249,3 +249,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
