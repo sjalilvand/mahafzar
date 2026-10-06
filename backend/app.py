@@ -88,6 +88,21 @@ def create_app():
 
     api.add_namespace(auth_ns, path='/api/auth')
     api.add_namespace(biz_ns, path='/api/business')
+
+    # MahAI: friendly JWT errors through flask-restx
+    from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, RevokedTokenError
+
+    @api.errorhandler(NoAuthorizationError)
+    def _mh_no_auth(e):
+        return {'message': 'توکن احراز هویت وجود ندارد'}, 401
+
+    @api.errorhandler(InvalidHeaderError)
+    def _mh_invalid(e):
+        return {'message': 'توکن نامعتبر است'}, 422
+
+    @api.errorhandler(RevokedTokenError)
+    def _mh_revoked(e):
+        return {'message': 'توکن باطل شده است'}, 401
     api.add_namespace(courses_ns, path='/api/courses')
     api.add_namespace(members_ns, path='/api/members')
     api.add_namespace(missions_ns, path='/api/missions')
@@ -272,4 +287,5 @@ if __name__ == '__main__':
     print("👤 admin/admin123  |  user/user123")
     print("="*50)
     socketio.run(app, debug=True, port=5000)
+
 
