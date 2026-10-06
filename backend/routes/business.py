@@ -169,7 +169,7 @@ class AdminTickets(Resource):
         if not _is_admin(_uid()):
             return {'message': 'dastresi mojaz nist'}, 403
         rows = BizTicket.query.order_by(BizTicket.updated_at.desc()).limit(200).all()
-        return {'tickets': [t.to_dict() for t in rows]}, 200
+        return {'tickets': [dict(t.to_dict(), user_email=_user_email(t.user_id)) for t in rows]}, 200
 
 
 @biz_ns.route('/coupons/validate')
@@ -316,3 +316,4 @@ class AdminPassword(Resource):
         u.password_hash = generate_password_hash(new)
         db.session.commit()
         return {'message': 'رمز عبور با موفقیت تغییر کرد'}, 200
+

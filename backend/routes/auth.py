@@ -40,7 +40,7 @@ class SignUp(Resource):
         user = User(
             username=data['username'],
             email=data['email'],
-            full_name=data['full_name']
+            full_name=(data.get('full_name') or data.get('name') or data.get('username') or '')
         )
         user.set_password(data['password'])
 

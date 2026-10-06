@@ -141,7 +141,7 @@ export default function AdminBusiness() {
                     <button className="biz-btn" onClick={() => sendReply(t.id)}>ارسال پاسخ</button>
                   </div>
                   <div className="biz-actions" style={{ marginTop: 8 }}>
-                    <button className="biz-btn-sm" onClick={() => setStatus(t.id, 'answered'))}>علامت پاسخ‌داده‌شده</button>
+                    <button className="biz-btn-sm" onClick={() => setStatus(t.id, 'answered')}>علامت پاسخ‌داده‌شده</button>
                     <button className="biz-btn-sm" onClick={() => setStatus(t.id, 'open')}>بازگشایی</button>
                     <button className="biz-btn-sm danger" onClick={() => setStatus(t.id, 'closed')}>بستن تیکت</button>
                   </div>
@@ -221,3 +221,4 @@ export default function AdminBusiness() {
     </div>
   );
 }
+
