@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import {
+  ShoppingBag, Sparkles, Bot, Puzzle, Code2, Package, Star, TrendingUp
+} from "lucide-react";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 const SORTS = [
@@ -9,6 +12,14 @@ const SORTS = [
   { v: "expensive", t: "گران‌ترین" }, { v: "discount", t: "بیشترین تخفیف" },
   { v: "popular", t: "پرفروش‌ترین" },
 ];
+
+const catIcon = (name) => {
+  const n = name || "";
+  if (n.includes("هوش مصنوعی")) return <Bot size={34} strokeWidth={1.6} />;
+  if (n.includes("پلاگین") || n.includes("افزونه")) return <Puzzle size={34} strokeWidth={1.6} />;
+  if (n.includes("نرم")) return <Code2 size={34} strokeWidth={1.6} />;
+  return <Package size={34} strokeWidth={1.6} />;
+};
 
 export default function Shop() {
   const [products, setProducts] = useState([]);
@@ -34,8 +45,13 @@ export default function Shop() {
 
   return (
     <div className="biz-page" style={{ maxWidth: 1200 }}>
-      <h1 className="biz-title">فروشگاه محصولات</h1>
-      <p className="biz-sub">نرم‌افزارها و ابزارهای هوشمند ماه‌افزار — پرداخت امن از کیف پول، دانلود فوری پس از خرید</p>
+
+      <div className="shop-hero">
+        <span className="shop-hero-kicker"><Sparkles size={14} /> محصولات رسمی ماه‌افزار</span>
+        <h1>فروشگاه نرم‌افزارهای هوشمند</h1>
+        <p>پرداخت امن از کیف پول • تحویل و دانلود فوری • ۶ ماه پشتیبانی رایگان</p>
+        <Sparkles className="shop-hero-glow" size={150} strokeWidth={0.6} />
+      </div>
 
       <div className="shop-toolbar">
         <input className="biz-input" style={{ margin: 0, flex: 1, minWidth: 220 }}
@@ -59,19 +75,33 @@ export default function Shop() {
         <div className="shop-grid">
           {products.map(p => (
             <div key={p.id} className="shop-card">
-              {p.flash_active && <span className="flash-badge">⚡ فروش فوق‌العاده</span>}
+              <div className={"shop-thumb t-" + (p.id % 5)}>
+                {catIcon(p.category)}
+                {p.featured && <span className="feat-badge"><Star size={11} /> ویژه</span>}
+              </div>
+              {p.flash_active && <span className="flash-badge"><Sparkles size={11} /> فروش فوق‌العاده</span>}
               {p.discount_percent > 0 && <span className="disc-badge">{p.discount_percent}٪ تخفیف</span>}
+
               <Link to={"/product/" + p.slug} className="shop-card-body">
                 <h3>{p.name}</h3>
                 <p>{p.short_desc}</p>
               </Link>
+
+              <div className="shop-meta">
+                <span className="chip"><TrendingUp size={11} /> {fmt(p.sales_count)} فروش</span>
+                {p.category && <span className="chip">{p.category}</span>}
+              </div>
+
               <div className="shop-card-foot">
                 <div className="price-box">
                   {p.discount_percent > 0 && <del>{fmt(p.price)}</del>}
-                  <b>{fmt(p.final_price)} <small>تومان</small></b>
+                  <b>{fmt(p.final_price)}</b><small>تومان</small>
                 </div>
-                <button className="biz-btn" onClick={() => cartApi.add(p)}>افزودن</button>
               </div>
+
+              <button className="shop-add" onClick={() => cartApi.add(p)}>
+                <ShoppingBag size={16} /> افزودن به سبد
+              </button>
             </div>
           ))}
           {products.length === 0 && <p className="biz-sub">محصولی یافت نشد.</p>}
@@ -80,4 +110,3 @@ export default function Shop() {
     </div>
   );
 }
-
