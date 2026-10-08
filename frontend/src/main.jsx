@@ -7,6 +7,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { SettingsProvider } from './contexts/SettingsContext';
 import './i18n'; // تنظیمات i18n
 import './App.css';
+import './appearance';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -1277,3 +1277,53 @@ html {
 .biz-btn-sm { background: rgba(34,211,238,.12); color: #22d3ee; border: 1px solid rgba(34,211,238,.35); border-radius: 8px; padding: 4px 10px; cursor: pointer; font-family: inherit; font-size: 12px; }
 .biz-btn-sm.danger { background: rgba(100,116,139,.15); color: #94a3b8; border-color: rgba(100,116,139,.4); }
 /* ==== END ==== */
+
+/* ================= MAHAI APPEARANCE ENGINE ================= */
+:root{ --ap-font:'Vazirmatn'; --ap-fsize:16px; --ap-lh:1.7; --ap-ls:0px; --ap-radius:12px; --accent:#22d3ee; }
+
+/* --- user font/size/spacing/radius (beats inline styles from context) --- */
+.app-container{
+  font-family: var(--ap-font), 'Vazirmatn', Tahoma, sans-serif !important;
+  font-size: var(--ap-fsize) !important;
+  line-height: var(--ap-lh) !important;
+  letter-spacing: var(--ap-ls) !important;
+  --border-radius: var(--ap-radius) !important;
+}
+.biz-card,.biz-stat,.user-dropdown,.biz-input,.biz-select,.biz-textarea,.biz-btn,.ud-item{border-radius:var(--ap-radius) !important}
+
+/* --- accent color consumers --- */
+.btn-auth.solid{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 45%,#6366f1)) !important}
+.biz-btn{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 45%,#6366f1)) !important}
+.nv-link.active{color:var(--accent) !important}
+.nv-link.active::after{background:linear-gradient(90deg,var(--accent),#6366f1) !important}
+.lang-btn{border-color:color-mix(in srgb,var(--accent) 45%,transparent) !important;color:var(--accent) !important}
+.biz-stat b,.biz-balance{color:var(--accent) !important}
+.icon-btn:hover,.ud-item:hover,.mm-item:hover{color:var(--accent) !important}
+.biz-open{background:color-mix(in srgb,var(--accent) 15%,transparent) !important;color:var(--accent) !important}
+.hamburger,.user-btn{border-color:color-mix(in srgb,var(--accent) 30%,rgba(148,163,184,.25)) !important}
+
+/* --- LIGHT THEME contrast rescue --- */
+.theme-light{ --text:#0f172a; --text-muted:#475569; color-scheme:light; }
+.theme-light h1,.theme-light h2,.theme-light h3,.theme-light h4{color:#0f172a !important}
+.theme-light p,.theme-light li,.theme-light span,.theme-light b,.theme-light label,.theme-light small{color:#334155}
+.theme-light .section-title,.theme-light .subtitle{color:#0f172a !important}
+.theme-light .glass-card{background:#ffffff !important;border:1px solid rgba(15,23,42,.09) !important;box-shadow:0 4px 18px rgba(15,23,42,.06) !important}
+.theme-light .biz-card{background:#ffffff !important;border:1px solid rgba(15,23,42,.10) !important}
+.theme-light .biz-title{color:#0f172a !important}
+.theme-light .biz-sub{color:#64748b !important}
+.theme-light .biz-input,.theme-light .biz-select,.theme-light .biz-textarea{background:#f8fafc !important;color:#0f172a !important;border-color:rgba(15,23,42,.18) !important}
+.theme-light .biz-msg{background:#f1f5f9 !important;color:#0f172a !important}
+.theme-light .biz-chip.biz-closed{background:#e2e8f0 !important;color:#475569 !important}
+.theme-light .ud-head b{color:#0f172a !important}
+.theme-light .ud-item{color:#334155 !important}
+.theme-light .ud-item:hover{background:color-mix(in srgb,var(--accent) 10%,transparent) !important;color:var(--accent) !important}
+.theme-light .icon-btn,.theme-light .user-btn svg{color:#475569 !important}
+.theme-light .user-btn{background:#f1f5f9 !important}
+.theme-light .user-dropdown{border-color:rgba(15,23,42,.10) !important}
+.theme-light .mm-item{color:#334155 !important}
+.theme-light .hamburger{color:#0f172a !important;border-color:rgba(15,23,42,.18)}
+.theme-light .stat{color:#0f172a !important}
+.theme-light ::-webkit-scrollbar-track{background:#f1f5f9}
+.theme-light ::-webkit-scrollbar-thumb{background:#cbd5e1}
+.theme-light ::selection{background:color-mix(in srgb,var(--accent) 30%,transparent)}
+/* ================= END APPEARANCE ENGINE ================= */

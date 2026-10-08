@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Globe, Menu, X, Wallet, LifeBuoy, LayoutDashboard,
-  Trophy, BarChart3, Shield, Briefcase, User, LogOut, ChevronDown
+  Trophy, BarChart3, Shield, Briefcase, User, LogOut, ChevronDown, Palette
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -51,6 +51,7 @@ const Navbar = () => {
     { to: '/gamification', label: t('gamification', 'بازی‌سازی'), icon: <Trophy size={16} /> },
     { to: '/analytics', label: t('analytics', 'تحلیل'), icon: <BarChart3 size={16} /> },
     { to: '/profile', label: t('profile', 'پروفایل'), icon: <User size={16} /> },
+    { to: '/appearance', label: 'شخصی‌سازی ظاهر', icon: <Palette size={16} /> },
     ...(isAdmin ? [{ to: '/admin', label: t('admin_panel', 'پنل ادمین'), icon: <Shield size={16} /> }] : []),
     ...(isAdmin ? [{ to: '/admin/business', label: 'مدیریت تجاری', icon: <Briefcase size={16} /> }] : []),
   ];
@@ -151,3 +152,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
