@@ -3,13 +3,14 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Globe, Menu, X, Wallet, LifeBuoy, LayoutDashboard,
-  Trophy, BarChart3, Shield, Briefcase, User, LogOut, ChevronDown, Palette
+  Trophy, BarChart3, Shield, Briefcase, User, LogOut, ChevronDown, Palette, Store
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import ThemeSwitcher from '../common/ThemeSwitcher';
 import NotificationSystem from '../common/NotificationSystem';
 import './Navbar.css';
+import CartIcon from '../common/CartIcon';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -38,7 +39,9 @@ const Navbar = () => {
   const isAdmin = !!(user && (user.role === 'admin' || user.is_admin));
 
   const mainLinks = [
+    { to: '/shop', label: 'فروشگاه' },
     { to: '/about', label: t('about', 'درباره ما') },
+    { to: '/blog', label: 'مقالات' },
     { to: '/courses', label: t('courses', 'آموزش‌ها') },
     { to: '/members', label: t('members', 'اعضا') },
     { to: '/forum', label: t('forum', 'انجمن') },
@@ -52,6 +55,7 @@ const Navbar = () => {
     { to: '/analytics', label: t('analytics', 'تحلیل'), icon: <BarChart3 size={16} /> },
     { to: '/profile', label: t('profile', 'پروفایل'), icon: <User size={16} /> },
     { to: '/appearance', label: 'شخصی‌سازی ظاهر', icon: <Palette size={16} /> },
+    ...(isAdmin ? [{ to: '/admin/shop', label: 'مدیریت فروشگاه', icon: <Store size={16} /> }] : []),
     ...(isAdmin ? [{ to: '/admin', label: t('admin_panel', 'پنل ادمین'), icon: <Shield size={16} /> }] : []),
     ...(isAdmin ? [{ to: '/admin/business', label: 'مدیریت تجاری', icon: <Briefcase size={16} /> }] : []),
   ];
@@ -71,6 +75,7 @@ const Navbar = () => {
         </div>
 
         <div className="nav-actions">
+          <CartIcon />
           <Link to="/wallet" className="icon-btn" title="کیف پول"><Wallet size={18} /></Link>
           <Link to="/support" className="icon-btn" title="پشتیبانی"><LifeBuoy size={18} /></Link>
           <div className="ts-h"><ThemeSwitcher /></div>
@@ -152,4 +157,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 

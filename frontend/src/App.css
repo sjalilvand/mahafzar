@@ -1327,3 +1327,25 @@ html {
 .theme-light ::-webkit-scrollbar-thumb{background:#cbd5e1}
 .theme-light ::selection{background:color-mix(in srgb,var(--accent) 30%,transparent)}
 /* ================= END APPEARANCE ENGINE ================= */
+
+/* ==== MAHAI SHOP UI ==== */
+.shop-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.shop-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.shop-cats .biz-chip{cursor:pointer;font-size:13px;padding:6px 14px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.shop-card{position:relative;background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.16);border-radius:var(--ap-radius,12px);padding:18px;display:flex;flex-direction:column;transition:transform .2s,border-color .2s}
+.shop-card:hover{transform:translateY(-4px);border-color:var(--accent,#22d3ee)}
+.shop-card-body{text-decoration:none;color:inherit;flex:1}
+.shop-card-body h3{color:#e2e8f0;font-size:15.5px;margin:0 0 8px}
+.shop-card-body p{color:#94a3b8;font-size:13px;line-height:1.8;margin:0}
+.shop-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
+.price-box del{color:#64748b;font-size:12.5px;margin-inline-end:6px}
+.price-box b{color:var(--accent,#22d3ee);font-size:16px}
+.price-box small{font-size:11px}
+.flash-badge{position:absolute;top:-9px;inset-inline-start:12px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px}
+.disc-badge{position:absolute;top:-9px;inset-inline-end:12px;background:rgba(34,211,238,.15);border:1px solid rgba(34,211,238,.4);color:var(--accent,#22d3ee);font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+.cart-badge{position:absolute;top:-6px;inset-inline-end:-6px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.theme-light .shop-card{background:#fff;border-color:rgba(15,23,42,.1)}
+.theme-light .shop-card-body h3{color:#0f172a}
+.theme-light .shop-card-body p{color:#64748b}
+/* ==== END SHOP UI ==== */
