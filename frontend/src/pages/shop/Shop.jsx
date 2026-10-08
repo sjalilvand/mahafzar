@@ -28,6 +28,7 @@ export default function Shop() {
   const [cat, setCat] = useState("");
   const [sort, setSort] = useState("newest");
   const [loading, setLoading] = useState(true);
+  const [addedId, setAddedId] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -42,6 +43,12 @@ export default function Shop() {
   useEffect(() => { load(); }, [cat, sort]);
   useEffect(() => { const t = setTimeout(load, 400); return () => clearTimeout(t); }, [q]);
   useEffect(() => { client.get("/shop/categories").then(r => setCats(r.data.categories || [])).catch(() => {}); }, []);
+
+  const addToCart = (p) => {
+    cartApi.add(p);
+    setAddedId(p.id);
+    setTimeout(() => setAddedId(null), 1400);
+  };
 
   return (
     <div className="biz-page" style={{ maxWidth: 1200 }}>
@@ -110,3 +117,4 @@ export default function Shop() {
     </div>
   );
 }
+
