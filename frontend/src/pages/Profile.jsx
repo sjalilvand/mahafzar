@@ -123,6 +123,7 @@ const Profile = () => {
         }
       });
       setProfile({ ...profile, avatar_url: res.data.avatar_url });
+      setTimeout(() => window.location.reload(), 800);
     } catch (err) {
       alert(err.response?.data?.message || 'خطا در آپلود');
     }
@@ -143,6 +144,7 @@ const Profile = () => {
         }
       });
       setProfile({ ...profile, cover_url: res.data.cover_url });
+      setTimeout(() => window.location.reload(), 800);
     } catch (err) {
       alert(err.response?.data?.message || 'خطا در آپلود');
     }
@@ -598,4 +600,5 @@ const Profile = () => {
 };
 
 export default Profile;
+
 

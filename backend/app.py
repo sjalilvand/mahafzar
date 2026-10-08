@@ -91,6 +91,14 @@ def create_app():
     api.add_namespace(biz_ns, path='/api/business')
     api.add_namespace(shop_ns, path='/api/shop')
 
+    # MahAI: serve uploaded files (avatars/covers)
+    from flask import send_from_directory
+    _uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+
+    @app.route('/uploads/<path:filename>')
+    def mahai_uploads(filename):
+        return send_from_directory(_uploads_dir, filename)
+
     # MahAI: friendly JWT errors through flask-restx
     from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, RevokedTokenError
 
@@ -289,6 +297,7 @@ if __name__ == '__main__':
     print("👤 admin/admin123  |  user/user123")
     print("="*50)
     socketio.run(app, debug=True, port=5000)
+
 
 
 
