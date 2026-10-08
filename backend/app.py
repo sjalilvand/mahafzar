@@ -26,7 +26,8 @@ from routes.payments import payments_ns
 from routes.recommendations import rec_ns
 from routes.ab_testing import ab_ns
 from routes.admin import admin_ns
-from routes.business import biz_ns  # admin panel
+from routes.business import biz_ns
+from routes.shop import shop_ns  # admin panel
 
 def create_app():
     app = Flask(__name__)
@@ -88,6 +89,7 @@ def create_app():
 
     api.add_namespace(auth_ns, path='/api/auth')
     api.add_namespace(biz_ns, path='/api/business')
+    api.add_namespace(shop_ns, path='/api/shop')
 
     # MahAI: friendly JWT errors through flask-restx
     from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, RevokedTokenError
@@ -287,5 +289,6 @@ if __name__ == '__main__':
     print("👤 admin/admin123  |  user/user123")
     print("="*50)
     socketio.run(app, debug=True, port=5000)
+
 
 
