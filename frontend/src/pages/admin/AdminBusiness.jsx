@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import client from '../api/client';
+import client from '../../api/client';
 
 const fmt = n => new Intl.NumberFormat('fa-IR').format(n || 0);
 const fdate = s => s ? new Date(s).toLocaleString('fa-IR') : '-';
@@ -221,4 +221,5 @@ export default function AdminBusiness() {
     </div>
   );
 }
+
 
