@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSyncExternalStore } from "react";
-import client from "../api/client";
-import { cartApi } from "../cartStore";
+import client from "../../api/client";
+import { cartApi } from "../../cartStore";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 
@@ -90,3 +90,4 @@ export default function Cart() {
     </div>
   );
 }
+

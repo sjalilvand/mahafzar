@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import client from "../api/client";
+import client from "../../api/client";
 
 export default function Blog() {
   const [arts, setArts] = useState([]);
@@ -20,3 +20,4 @@ export default function Blog() {
     </div>
   );
 }
+

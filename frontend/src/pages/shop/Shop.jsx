@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import client from "../api/client";
-import { cartApi } from "../cartStore";
+import client from "../../api/client";
+import { cartApi } from "../../cartStore";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 const SORTS = [
@@ -80,3 +80,4 @@ export default function Shop() {
     </div>
   );
 }
+
