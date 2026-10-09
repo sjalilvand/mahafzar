@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import './Profile.css';
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const Profile = () => {
   const { user, token } = useAuth();
@@ -600,5 +600,6 @@ const Profile = () => {
 };
 
 export default Profile;
+
 
 

@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import DataTable from './DataTable';
 import { Plus, Save, X, Star } from 'lucide-react';
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const MemberManagement = () => {
   const { token } = useAuth();
@@ -148,3 +148,4 @@ const MemberManagement = () => {
 };
 
 export default MemberManagement;
+

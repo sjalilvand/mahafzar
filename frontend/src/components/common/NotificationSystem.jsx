@@ -4,7 +4,7 @@ import { Bell, X, CheckCircle, Info, AlertTriangle, XCircle } from 'lucide-react
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const NotificationSystem = () => {
   const { user, token } = useAuth();
@@ -168,3 +168,4 @@ const NotificationSystem = () => {
 };
 
 export default NotificationSystem;
+

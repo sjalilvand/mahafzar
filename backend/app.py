@@ -99,6 +99,20 @@ def create_app():
     def mahai_uploads(filename):
         return send_from_directory(_uploads_dir, filename)
 
+    # MahAI: serve frontend SPA (single-origin mode, FRONTEND_DIST env)
+    _front_dist = os.environ.get('FRONTEND_DIST') or os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'frontend', 'dist')
+
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def mahai_spa(path):
+        full = os.path.join(_front_dist, path)
+        if path and os.path.isfile(full):
+            return send_from_directory(_front_dist, path)
+        idx = os.path.join(_front_dist, 'index.html')
+        if os.path.isfile(idx):
+            return send_from_directory(_front_dist, 'index.html')
+        return {'message': 'frontend dist not found'}, 404
+
     # MahAI: friendly JWT errors through flask-restx
     from flask_jwt_extended.exceptions import NoAuthorizationError, InvalidHeaderError, RevokedTokenError
 
@@ -297,6 +311,7 @@ if __name__ == '__main__':
     print("👤 admin/admin123  |  user/user123")
     print("="*50)
     socketio.run(app, debug=True, port=5000)
+
 
 
 

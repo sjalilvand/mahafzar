@@ -4,7 +4,7 @@ import { Search, Filter, Star, Clock, Eye, MessageCircle } from 'lucide-react';
 import axios from 'axios';
 import './Courses.css';
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -213,4 +213,5 @@ const Courses = () => {
 };
 
 export default Courses;
+
 

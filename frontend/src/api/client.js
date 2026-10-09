@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const client = axios.create({
-  baseURL: (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000') + '/api',
+  baseURL: (import.meta.env.VITE_API_URL || '') + '/api',
 });
 
 client.interceptors.request.use((config) => {
@@ -13,5 +13,6 @@ client.interceptors.request.use((config) => {
 });
 
 export default client;
+
 
 

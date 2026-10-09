@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const ChatHistory = () => {
   const { token } = useAuth();
@@ -49,3 +49,4 @@ const ChatHistory = () => {
 };
 
 export default ChatHistory;
+

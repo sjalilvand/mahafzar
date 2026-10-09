@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Phone, Mail, MapPin, Send } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const Contact = () => {
   const { user, token } = useAuth();
@@ -178,3 +178,4 @@ const Contact = () => {
 };
 
 export default Contact;
+

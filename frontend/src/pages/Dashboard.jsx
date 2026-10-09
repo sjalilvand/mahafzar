@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import './Dashboard.css'; // استایل‌های جدید در صورت نیاز
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const Dashboard = () => {
   const { user, token, logout } = useAuth();
@@ -249,4 +249,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 

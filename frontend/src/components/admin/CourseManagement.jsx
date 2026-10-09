@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Save, X } from 'lucide-react';
 
-const API_URL = (import.meta.env.VITE_API_URL||'http://127.0.0.1:5000')+'/api';
+const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 
 const CourseManagement = () => {
   const { token } = useAuth();
@@ -208,3 +208,4 @@ const CourseManagement = () => {
 };
 
 export default CourseManagement;
+
