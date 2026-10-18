@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import { ShieldCheck, Headset, RefreshCw, Wallet, Package } from "lucide-react";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 
@@ -33,6 +34,12 @@ export default function ProductDetail() {
           <Link className="btn-auth ghost" to="/shop">بازگشت</Link>
         </div>
         {msg && <p style={{ color: "#22d3ee", marginTop: 10 }}>{msg}</p>}
+        <div className="mh-pd-trust">
+          <div><Wallet size={16} /><span>پرداخت امن از کیف پول</span></div>
+          <div><ShieldCheck size={16} /><span>ضمانت بازگشت وجه تا ۷ روز</span></div>
+          <div><Headset size={16} /><span>۶ ماه پشتیبانی رایگان</span></div>
+          <div><RefreshCw size={16} /><span>به‌روزرسانی خودکار</span></div>
+        </div>
       </div>
       {data.related && data.related.length > 0 && (
         <>
@@ -40,8 +47,11 @@ export default function ProductDetail() {
           <div className="shop-grid">
             {data.related.map(r => (
               <div key={r.id} className="shop-card">
+                <Link to={"/product/" + r.slug} className={"shop-thumb t-" + (r.id % 5)} style={{ textDecoration: "none" }}>
+                  <Package size={30} strokeWidth={1.6} />
+                </Link>
                 <Link to={"/product/" + r.slug} className="shop-card-body"><h3>{r.name}</h3></Link>
-                <div className="shop-card-foot"><b style={{ color: "#22d3ee" }}>{fmt(r.final_price)}</b>
+                <div className="shop-card-foot"><b style={{ color: "#22d3ee" }}>{fmt(r.final_price)} <small>تومان</small></b>
                   <button className="biz-btn" onClick={() => cartApi.add(r)}>افزودن</button></div>
               </div>
             ))}

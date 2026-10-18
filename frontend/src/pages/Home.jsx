@@ -3,13 +3,17 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import client from '../api/client';
+import { cartApi } from '../cartStore';
 import {
   Brain, Shield, Database, Activity, Server, Cpu,
   Phone, Mail, MapPin, CheckCircle, Zap, ArrowRight,
-  MessageCircle
+  MessageCircle, ShieldCheck, Headset, RefreshCw, Wallet,
+  Eye, ShoppingBag, Newspaper, ArrowLeft, Sparkles, TrendingUp
 } from 'lucide-react';
 
 const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
+const fmt = n => new Intl.NumberFormat('fa-IR').format(n || 0);
 
 // ============= ANIMATION VARIANTS =============
 const fadeInUp = {
@@ -112,15 +116,72 @@ const StatCard = ({ number, label }) => (
   </motion.div>
 );
 
+// ============= ZHAKET-INSPIRED MARKETPLACE PIECES =============
+const SectionHead = ({ title, desc, to }) => (
+  <motion.div className="mh-sec-head" variants={fadeInUp}>
+    <div>
+      <h2 className="mh-sec-title">{title}</h2>
+      {desc && <p className="mh-sec-desc">{desc}</p>}
+    </div>
+    {to && <Link to={to} className="mh-sec-more">مشاهده همه <ArrowLeft size={15} /></Link>}
+  </motion.div>
+);
+
+const MarketCard = ({ p }) => (
+  <motion.div className="mh-pcard" variants={fadeInUp} whileHover={{ y: -8 }}>
+    <Link to={'/product/' + p.slug} className="mh-pcard-thumb">
+      <div className={"shop-thumb t-" + (p.id % 5)}>
+        <Sparkles size={30} strokeWidth={1.5} />
+        {p.discount_percent > 0 && <span className="mh-pcard-disc">{p.discount_percent}٪</span>}
+        {p.flash_active && <span className="mh-pcard-flash">فوق‌العاده</span>}
+      </div>
+    </Link>
+    <div className="mh-pcard-body">
+      <Link to={'/product/' + p.slug}><h3>{p.name}</h3></Link>
+      <p>{p.short_desc}</p>
+      <div className="mh-pcard-meta">
+        <span><TrendingUp size={12} /> {fmt(p.sales_count)} فروش</span>
+        {p.category && <span>{p.category}</span>}
+      </div>
+    </div>
+    <div className="mh-pcard-price">
+      {p.discount_percent > 0 && <del>{fmt(p.price)}</del>}
+      <b>{fmt(p.final_price)}</b><small>تومان</small>
+    </div>
+    <div className="mh-pcard-actions">
+      <Link to={'/product/' + p.slug} className="mh-pcard-preview"><Eye size={14} /> مشاهده</Link>
+      <button onClick={() => cartApi.add(p)}><ShoppingBag size={14} /> خرید</button>
+    </div>
+  </motion.div>
+);
+
+const ArticleCard = ({ a }) => (
+  <motion.div className="mh-acard" variants={fadeInUp} whileHover={{ y: -8 }}>
+    <div className="mh-acard-top">
+      <span className="mh-acard-ic"><Newspaper size={18} /></span>
+      <small>{new Date(a.created_at).toLocaleDateString('fa-IR')}</small>
+    </div>
+    <h3>{a.title}</h3>
+    <p>{a.excerpt}</p>
+    <Link to={'/blog/' + a.slug} className="mh-acard-more">مطالعه مقاله <ArrowLeft size={14} /></Link>
+  </motion.div>
+);
+
 // ============= MAIN HOME COMPONENT =============
 const Home = () => {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '' });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
   const [missions, setMissions] = useState([]);
+  const [latest, setLatest] = useState([]);
+  const [discounted, setDiscounted] = useState([]);
+  const [articles, setArticles] = useState([]);
 
   useEffect(() => {
     fetchMissions();
+    client.get('/shop/products?sort=newest').then(r => setLatest((r.data.products || []).slice(0, 4))).catch(() => {});
+    client.get('/shop/products?sort=discount').then(r => setDiscounted((r.data.products || []).filter(p => p.discount_percent > 0).slice(0, 4))).catch(() => {});
+    client.get('/shop/articles').then(r => setArticles((r.data.articles || []).slice(0, 3))).catch(() => {});
   }, []);
 
   const fetchMissions = async () => {
@@ -227,6 +288,28 @@ const Home = () => {
         </motion.div>
       </section>
 
+      {/* ============= TRUST STRIP (zhaket-style) ============= */}
+      <div className="mh-trust">
+        <div className="mh-trust-row">
+          <div className="mh-trust-item">
+            <span className="mh-trust-ic"><Wallet size={20} /></span>
+            <div><b>پرداخت امن</b><span>از کیف پول سایت</span></div>
+          </div>
+          <div className="mh-trust-item">
+            <span className="mh-trust-ic"><ShieldCheck size={20} /></span>
+            <div><b>ضمانت بازگشت وجه</b><span>تا ۷ روز بدون قید و شرط</span></div>
+          </div>
+          <div className="mh-trust-item">
+            <span className="mh-trust-ic"><Headset size={20} /></span>
+            <div><b>پشتیبانی حرفه‌ای</b><span>۶ ماه پشتیبانی رایگان</span></div>
+          </div>
+          <div className="mh-trust-item">
+            <span className="mh-trust-ic"><RefreshCw size={20} /></span>
+            <div><b>به‌روزرسانی خودکار</b><span>دریافت آخرین نسخه‌ها</span></div>
+          </div>
+        </div>
+      </div>
+
       {/* ============= MISSION SECTION ============= */}
       <AnimatedSection id="about" className="section">
         <div className="container">
@@ -295,6 +378,32 @@ const Home = () => {
         </div>
       </AnimatedSection>
 
+      {/* ============= LATEST PRODUCTS (zhaket-style) ============= */}
+      <AnimatedSection className="section mh-market" id="market">
+        <div className="container">
+          <SectionHead title="جدیدترین محصولات ماه‌افزار"
+                       desc="تازه‌ترین نرم‌افزارها، ابزارهای هوشمند و پلاگین‌های تیم ما را ببینید و سایت خود را مجهز کنید."
+                       to="/shop" />
+          <div className="mh-pgrid">
+            {latest.map(p => <MarketCard key={p.id} p={p} />)}
+          </div>
+          {latest.length === 0 && <p className="section-desc">به‌زودی محصولات جدید در این بخش قرار می‌گیرند.</p>}
+        </div>
+      </AnimatedSection>
+
+      {/* ============= TOP DISCOUNTS (zhaket-style) ============= */}
+      <AnimatedSection className="section mh-market mh-market-alt">
+        <div className="container">
+          <SectionHead title="پرتخفیف‌های ماه‌افزار، همین حالا بخرید!"
+                       desc="فرصت‌های محدود با تخفیف‌های استثنایی روی محصولات منتخب."
+                       to="/shop?sort=discount" />
+          <div className="mh-pgrid">
+            {discounted.map(p => <MarketCard key={p.id} p={p} />)}
+          </div>
+          {discounted.length === 0 && <p className="section-desc">فعلاً تخفیف فعالی ثبت نشده است.</p>}
+        </div>
+      </AnimatedSection>
+
       {/* ============= STATS BANNER ============= */}
       <section className="stats-banner">
         <div className="container">
@@ -310,6 +419,33 @@ const Home = () => {
             <StatCard number="۱۰۰٪" label="تعهد به امنیت داده" />
             <StatCard number="۲۴/۷" label="پشتیبانی فنی" />
           </motion.div>
+        </div>
+      </section>
+
+      {/* ============= LATEST ARTICLES (zhaket-style) ============= */}
+      <AnimatedSection className="section">
+        <div className="container">
+          <SectionHead title="آخرین مطالب وبلاگ، همیشه به‌روز باشید"
+                       desc="دانش فنی و تجربه‌های اجرایی تیم ماه‌افزار را بخوانید."
+                       to="/blog" />
+          <div className="mh-agrid">
+            {articles.map(a => <ArticleCard key={a.slug} a={a} />)}
+          </div>
+          {articles.length === 0 && <p className="section-desc">به‌زودی مقالات جدید منتشر می‌شوند.</p>}
+        </div>
+      </AnimatedSection>
+
+      {/* ============= CTA BANNER (zhaket-style) ============= */}
+      <section className="mh-cta">
+        <div className="mh-cta-inner">
+          <div className="mh-cta-text">
+            <h2>دنبال راهکار نرم‌افزاری اختصاصی هستید؟</h2>
+            <p>تیم ماه‌افزار با بیش از ۵ سال تجربه در طراحی سامانه‌های تصمیم‌یار و هوش مصنوعی، در کنار شماست.</p>
+          </div>
+          <div className="mh-cta-actions">
+            <Link to="/contact" className="btn-primary">درخواست مشاوره رایگان</Link>
+            <Link to="/pricing" className="mh-cta-ghost">مشاهده تعرفه‌ها</Link>
+          </div>
         </div>
       </section>
 

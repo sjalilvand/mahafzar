@@ -68,9 +68,60 @@
   .nav-center{display:none}
   .hamburger{display:inline-flex}
   .desktop-only{display:none !important}
+  .mh-nav-search{display:none}
 }
 @media (max-width:460px){
   .nav-logo span{display:none}
   .nav-content{padding:0 12px;gap:8px}
   .btn-auth{padding:0 12px;font-size:12.5px}
 }
+
+/* ============================================================
+   ZHAKET-INSPIRED ADDONS (mahai theme kept: dark + cyan)
+   ============================================================ */
+
+/* --- global search in navbar --- */
+.mh-nav-search{display:flex;align-items:center;gap:0;height:38px;max-width:250px;flex:1;min-width:150px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(148,163,184,.22);border-radius:12px;overflow:hidden;transition:.25s}
+.mh-nav-search:focus-within{border-color:rgba(34,211,238,.65);box-shadow:0 0 0 3px rgba(34,211,238,.12);background:rgba(255,255,255,.09)}
+.mh-nav-search .mh-ns-ic{margin:0 0 0 10px;color:var(--text-muted,#94a3b8);flex-shrink:0}
+.mh-nav-search input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--text,#e2e8f0);
+  font-family:inherit;font-size:12.5px;padding:0 8px}
+.mh-nav-search input::placeholder{color:#64748b}
+.mh-nav-search button{flex-shrink:0;height:100%;padding:0 12px;border:none;cursor:pointer;font-family:inherit;
+  font-size:12px;font-weight:700;color:#04121d;background:linear-gradient(135deg,#22d3ee,#6366f1)}
+.mh-nav-search-m{max-width:none;width:100%;margin-bottom:10px}
+.theme-light .mh-nav-search{background:rgba(15,23,42,.04);border-color:rgba(15,23,42,.14)}
+.theme-light .mh-nav-search input{color:#0f172a}
+.theme-light .mh-nav-search input::placeholder{color:#94a3b8}
+
+/* --- mega menu (shop) --- */
+.mh-mega-wrap{position:relative}
+.mh-mega-wrap .nv-link{display:inline-flex;align-items:center}
+.mh-mega-wrap .nv-link svg{transition:transform .2s}
+.mh-mega-wrap .nv-link svg.rot{transform:rotate(180deg)}
+.mh-mega{position:absolute;top:calc(100% + 10px);inset-inline-start:-14px;width:min(640px,86vw);
+  display:grid;grid-template-columns:1fr 1.15fr 1.15fr;gap:4px;padding:14px;
+  background:rgba(13,18,32,.98);border:1px solid rgba(148,163,184,.18);border-radius:18px;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);backdrop-filter:blur(22px);z-index:1100}
+.theme-light .mh-mega{background:rgba(255,255,255,.99);box-shadow:0 24px 60px rgba(15,23,42,.18)}
+.mh-mega-col{display:flex;flex-direction:column;gap:2px;padding:4px}
+.mh-mega-title{font-size:11.5px;font-weight:800;color:#64748b;padding:6px 10px;letter-spacing:.02em}
+.mh-mega-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;
+  color:var(--text,#cbd5e1);text-decoration:none;font-size:13px;font-weight:600;transition:.18s}
+.mh-mega-item:hover{background:rgba(34,211,238,.09);color:var(--primary,#22d3ee);transform:translateX(-2px)}
+.theme-light .mh-mega-item{color:#334155}
+.theme-light .mh-mega-item:hover{color:#0891b2;background:rgba(34,211,238,.1)}
+.mh-mega-ic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;
+  background:rgba(34,211,238,.1);color:var(--primary,#22d3ee);flex-shrink:0}
+.mh-mega-count{margin-inline-start:auto;font-size:11px;color:#64748b;background:rgba(148,163,184,.14);
+  border-radius:999px;padding:1px 8px}
+.mh-mega-empty{font-size:12px;color:#64748b;padding:8px 10px}
+.mh-mega-cta{grid-column:1/-1;margin-top:8px;padding:14px 16px;border-radius:14px;
+  background:linear-gradient(120deg,rgba(34,211,238,.12),rgba(99,102,241,.12));
+  border:1px solid rgba(34,211,238,.25);display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.mh-mega-cta-t{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;color:var(--primary,#22d3ee)}
+.mh-mega-cta p{margin:0;font-size:12.5px;color:var(--text-muted,#94a3b8);flex:1;min-width:160px}
+.mh-mega-cta-btn{flex-shrink:0;display:inline-flex;align-items:center;padding:8px 16px;border-radius:999px;
+  background:linear-gradient(135deg,#22d3ee,#6366f1);color:#04121d;font-size:12.5px;font-weight:800;text-decoration:none}
+.mh-mega-cta-btn:hover{filter:brightness(1.1)}
