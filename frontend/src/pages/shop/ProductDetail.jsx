@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
 import { wishlistApi } from "../../wishlistStore";
+import { compareApi } from "../../compareStore";
 import Stars from "../../components/common/Stars";
 import WishlistButton from "../../components/common/WishlistButton";
 import {
   ShieldCheck, Headset, RefreshCw, Wallet, Package, Heart,
-  ShoppingBag, MessageSquareQuote, Gift, Check
+  ShoppingBag, MessageSquareQuote, Gift, Check, Scale
 } from "lucide-react";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
@@ -177,6 +178,13 @@ export default function ProductDetail() {
   const [msg, setMsg] = useState("");
   const [bundles, setBundles] = useState([]);
   const [added, setAdded] = useState(false);
+  const [inCmp, setInCmp] = useState(() => compareApi.has(slug));
+  const toggleCompare = () => {
+    const res = compareApi.toggle(slug);
+    if (res === "full") { setMsg(`حداکثر ${new Intl.NumberFormat("fa-IR").format(compareApi.max)} محصول می‌تواند همزمان مقایسه شود.`); return; }
+    setInCmp(!!res);
+    setMsg(res ? "✅ به فهرست مقایسه اضافه شد" : "از فهرست مقایسه حذف شد");
+  };
   useEffect(() => {
     setData(null);
     client.get("/shop/products/" + slug).then(r => setData(r.data)).catch(() => setData({ nf: true }));
@@ -213,6 +221,9 @@ export default function ProductDetail() {
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button className="biz-btn" onClick={() => { cartApi.add(p); setMsg("✅ به سبد اضافه شد"); }}>افزودن به سبد</button>
           <button className="btn-auth solid" onClick={buyNow}>خرید فوری</button>
+          <button className={"btn-auth ghost" + (inCmp ? " mh-cmp-on" : "")} onClick={toggleCompare}>
+            <Scale size={15} style={{ marginInlineEnd: 5 }} /> {inCmp ? "در مقایسه ✓" : "افزودن به مقایسه"}
+          </button>
           <Link className="btn-auth ghost" to="/shop">بازگشت</Link>
         </div>
         {msg && <p style={{ color: "#22d3ee", marginTop: 10 }}>{msg}</p>}

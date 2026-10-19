@@ -416,3 +416,23 @@
     height: 250px;
   }
 }
+
+/* ============ v3: best sellers rank badges (zhaket-style) ============ */
+.mh-best-wrap{position:relative}
+.mh-rank{position:absolute;top:-11px;inset-inline-start:-9px;z-index:6;display:inline-flex;align-items:center;
+  justify-content:center;width:38px;height:38px;border-radius:13px;font-size:16.5px;font-weight:900;
+  color:#04121d;background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  box-shadow:0 10px 24px rgba(245,158,11,.4);border:2px solid rgba(255,255,255,.25)}
+.mh-rank.top{color:#04121d}
+.mh-best-wrap:nth-child(2) .mh-rank{background:linear-gradient(135deg,#e2e8f0,#94a3b8);box-shadow:0 10px 24px rgba(148,163,184,.35)}
+.mh-best-wrap:nth-child(3) .mh-rank{background:linear-gradient(135deg,#fb923c,#c2410c);color:#fff;box-shadow:0 10px 24px rgba(194,65,12,.4)}
+.mh-best-wrap:nth-child(n+4) .mh-rank{background:rgba(148,163,184,.2);color:#cbd5e1;box-shadow:none;border-color:rgba(148,163,184,.3)}
+.theme-light .mh-rank{border-color:rgba(255,255,255,.7)}
+.theme-light .mh-best-wrap:nth-child(n+4) .mh-rank{background:rgba(15,23,42,.08);color:#475569}
+@media (max-width:900px){
+  .mh-pgrid.mh-best-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:560px){
+  .mh-pgrid.mh-best-grid{grid-template-columns:1fr}
+  .mh-rank{width:32px;height:32px;font-size:14px;top:-9px;inset-inline-start:-7px}
+}

@@ -35,6 +35,7 @@ import Shop from './pages/shop/Shop';
 import ProductDetail from './pages/shop/ProductDetail';
 import Cart from './pages/shop/Cart';
 import Wishlist from './pages/shop/Wishlist';
+import Compare from './pages/shop/Compare';
 import Blog from './pages/blog/Blog';
 import BlogPost from './pages/blog/BlogPost';
 import AdminShop from './pages/admin/AdminShop';
@@ -112,6 +113,7 @@ function App() {
         <Route path="/product/:slug" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/compare" element={<Compare />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/admin/shop" element={<AdminShop />} />

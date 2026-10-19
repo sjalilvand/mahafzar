@@ -260,6 +260,15 @@ class ProductReviews(Resource):
                 'count': cnt, 'review': rev.to_dict()}, 201
 
 
+@shop_ns.route('/best-sellers')
+class BestSellers(Resource):
+    """پرفروش‌ترین محصولات برای نمایش در صفحه اصلی"""
+    def get(self):
+        rows = ShopProduct.query.filter_by(is_active=True).order_by(
+            ShopProduct.sales_count.desc(), ShopProduct.created_at.desc()).limit(8).all()
+        return {'products': [p.to_dict() for p in rows]}, 200
+
+
 @shop_ns.route('/bundles')
 class Bundles(Resource):
     """فهرست باندل‌های تخفیفی فعال"""
@@ -507,6 +516,28 @@ class AdminReviews(Resource):
 
 @shop_ns.route('/admin/reviews/<int:rid>')
 class AdminReviewOne(Resource):
+    @jwt_required()
+    def put(self, rid):
+        """ویرایش نظر/امتیاز توسط مدیر"""
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        r = db.session.get(ShopReview, rid)
+        if not r: return {'message': 'یافت نشد'}, 404
+        d = request.get_json(silent=True) or {}
+        try:
+            rating = int(d.get('rating', r.rating))
+        except (TypeError, ValueError):
+            rating = r.rating
+        if rating < 1 or rating > 5:
+            return {'message': 'امتیاز باید بین ۱ تا ۵ ستاره باشد'}, 400
+        r.rating = rating
+        if 'comment' in d: r.comment = (d.get('comment') or '')[:1500]
+        if 'username' in d and (d.get('username') or '').strip():
+            r.username = d['username'].strip()[:80]
+        db.session.commit()
+        p = ShopProduct.query.get(r.product_id)
+        return {'message': 'نظر به‌روزرسانی شد',
+                'review': dict(r.to_dict(), product=p.name if p else '?')}, 200
+
     @jwt_required()
     def delete(self, rid):
         if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403

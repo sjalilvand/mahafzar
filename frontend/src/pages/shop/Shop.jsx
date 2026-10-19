@@ -1,12 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import { compareApi } from "../../compareStore";
 import Stars from "../../components/common/Stars";
 import WishlistButton from "../../components/common/WishlistButton";
 import {
   ShoppingBag, Sparkles, Bot, Puzzle, Code2, Package, Star, TrendingUp,
-  Eye, Timer, X
+  Eye, Timer, X, Scale
 } from "lucide-react";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
@@ -90,7 +91,16 @@ export default function Shop() {
   const [sort, setSort] = useState("newest");
   const [loading, setLoading] = useState(true);
   const [addedId, setAddedId] = useState(null);
+  const [cmpNote, setCmpNote] = useState("");
   const [sp] = useSearchParams();
+  const cmpCount = useSyncExternalStore(compareApi.subscribe, compareApi.count, () => 0);
+
+  const toggleCompare = (p) => {
+    const res = compareApi.toggle(p.slug);
+    if (res === "full") setCmpNote(`حداکثر ${new Intl.NumberFormat("fa-IR").format(compareApi.max)} محصول می‌تواند همزمان مقایسه شود.`);
+    else setCmpNote("");
+    setTimeout(() => setCmpNote(""), 2600);
+  };
 
   /* sync filters from URL (mega-menu / navbar search links) */
   useEffect(() => {
@@ -181,6 +191,12 @@ export default function Shop() {
                 <Stars rating={p.rating} count={p.rating_count} />
                 <span className="chip"><TrendingUp size={11} /> {fmt(p.sales_count)} فروش</span>
                 {p.category && <span className="chip">{p.category}</span>}
+                <button type="button"
+                        className={"mh-cmp-toggle" + (compareApi.has(p.slug) ? " on" : "")}
+                        title="مقایسه این محصول"
+                        onClick={() => toggleCompare(p)}>
+                  <Scale size={12} /> {compareApi.has(p.slug) ? "در مقایسه" : "مقایسه"}
+                </button>
               </div>
 
               <div className="shop-card-foot">
@@ -201,6 +217,18 @@ export default function Shop() {
           {products.length === 0 && <p className="biz-sub">محصولی یافت نشد.</p>}
         </div>
       )}
+
+      {/* ---- نوار چسبان مقایسه (وقتی حداقل یک محصول انتخاب شده باشد) ---- */}
+      {cmpCount > 0 && (
+        <div className="mh-cmp-bar">
+          <span className="mh-cmp-bar-txt"><Scale size={16} /> {fmt(cmpCount)} محصول برای مقایسه انتخاب شده</span>
+          <span className="mh-cmp-bar-btns">
+            <button className="biz-btn-sm danger" onClick={() => compareApi.clear()}>پاک کردن</button>
+            <Link to="/compare" className="biz-btn-sm solid-link">مشاهده مقایسه</Link>
+          </span>
+        </div>
+      )}
+      {cmpNote && <div className="mh-cmp-note">{cmpNote}</div>}
     </div>
   );
 }

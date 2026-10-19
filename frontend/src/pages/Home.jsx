@@ -16,6 +16,7 @@ import {
 
 const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 const fmt = n => new Intl.NumberFormat('fa-IR').format(n || 0);
+const faNum = n => new Intl.NumberFormat('fa-IR').format(n);
 
 // ============= ANIMATION VARIANTS =============
 const fadeInUp = {
@@ -183,12 +184,14 @@ const Home = () => {
   const [status, setStatus] = useState(null);
   const [missions, setMissions] = useState([]);
   const [latest, setLatest] = useState([]);
+  const [best, setBest] = useState([]);
   const [discounted, setDiscounted] = useState([]);
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
     fetchMissions();
     client.get('/shop/products?sort=newest').then(r => setLatest((r.data.products || []).slice(0, 4))).catch(() => {});
+    client.get('/shop/best-sellers').then(r => setBest((r.data.products || []).slice(0, 4))).catch(() => {});
     client.get('/shop/products?sort=discount').then(r => setDiscounted((r.data.products || []).filter(p => p.discount_percent > 0).slice(0, 4))).catch(() => {});
     client.get('/shop/articles').then(r => setArticles((r.data.articles || []).slice(0, 3))).catch(() => {});
   }, []);
@@ -397,6 +400,24 @@ const Home = () => {
             {latest.map(p => <MarketCard key={p.id} p={p} />)}
           </div>
           {latest.length === 0 && <p className="section-desc">به‌زودی محصولات جدید در این بخش قرار می‌گیرند.</p>}
+        </div>
+      </AnimatedSection>
+
+      {/* ============= BEST SELLERS (zhaket-style) ============= */}
+      <AnimatedSection className="section mh-market">
+        <div className="container">
+          <SectionHead title="پرفروش‌ترین‌های ماه‌افزار"
+                       desc="محصولاتی که کاربران بیشترین خرید را از آن‌ها داشته‌اند — انتخاب مطمئن."
+                       to="/shop?sort=popular" />
+          <div className="mh-pgrid mh-best-grid">
+            {best.map((p, i) => (
+              <div key={p.id} className="mh-best-wrap">
+                <span className={'mh-rank' + (i < 3 ? ' top' : '')}>{faNum(i + 1)}</span>
+                <MarketCard p={p} />
+              </div>
+            ))}
+          </div>
+          {best.length === 0 && <p className="section-desc">هنوز فروشی ثبت نشده است — به‌زودی این بخش پر می‌شود.</p>}
         </div>
       </AnimatedSection>
 

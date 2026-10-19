@@ -35,6 +35,20 @@ with app.app_context():
     if p1 and not p1.flash_until:
         p1.flash_until = datetime.utcnow() + timedelta(hours=48)
         db.session.commit()
+    # ---- demo sales_count (so «پرفروش‌ترین‌ها» shows data out of the box) ----
+    demo_sales = {
+        'چت‌بات پشتیبانی هوشمند': 132,
+        'سامانه تصمیم‌یار رَسا': 96,
+        'افزونه گزارش‌گیر حرفه‌ای': 210,
+        'داشبورد هوشمند گزارش‌سازی': 74,
+        'پکیج شبیه‌سازی صنعتی': 41,
+        'موتور بهینه‌سازی آنتن MahAI Core': 58,
+    }
+    for pname, sc in demo_sales.items():
+        pp = ShopProduct.query.filter_by(name=pname).first()
+        if pp and not (pp.sales_count or 0):  # only if never sold — stays idempotent
+            pp.sales_count = sc
+    db.session.commit()
     arts = [
         ('چگونه هوش مصنوعی هزینه‌های سازمان را ۳۰٪ کاهش می‌دهد', 'مروری کاربردی بر صرفه‌جویی واقعی با اتوماسیون هوشمند'),
         ('راهنمای انتخاب سامانه تصمیم‌یار برای مدیران', 'معیارهای کلیدی پیش از خرید سامانه‌های BI و تصمیم‌یار'),
