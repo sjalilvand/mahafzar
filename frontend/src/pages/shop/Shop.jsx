@@ -65,7 +65,9 @@ function FlashStrip({ items, onAdd }) {
       <div className="mh-flash-row">
         {items.slice(0, 4).map(p => (
           <div key={p.id} className="mh-flash-item">
-            <Link to={"/product/" + p.slug} className="mh-flash-thumb">⚡</Link>
+            <Link to={"/product/" + p.slug} className="mh-flash-thumb">
+              {p.image_url ? <img src={p.image_url} alt="" loading="lazy" decoding="async" /> : "⚡"}
+            </Link>
             <div className="mh-flash-info">
               <Link to={"/product/" + p.slug} className="mh-flash-name">{p.name}</Link>
               <div className="mh-flash-price">
@@ -175,7 +177,9 @@ export default function Shop() {
           {products.map(p => (
             <div key={p.id} className="shop-card">
               <div className={"shop-thumb t-" + (p.id % 5)}>
-                {catIcon(p.category)}
+                {p.image_url
+                  ? <img className="shop-thumb-img" src={p.image_url} alt={p.name} loading="lazy" decoding="async" />
+                  : catIcon(p.category)}
                 {p.featured && <span className="feat-badge"><Star size={11} /> ویژه</span>}
               </div>
               <WishlistButton p={p} className="shop-card-wish" />

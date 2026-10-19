@@ -11,6 +11,7 @@ export default function Blog() {
       <p className="biz-sub">دانش فنی و تجربه‌های اجرایی تیم ماه‌افزار</p>
       {arts.map(a => (
         <Link key={a.slug} to={"/blog/" + a.slug} className="biz-card" style={{ display: "block", textDecoration: "none" }}>
+          {a.cover_url && <img className="mh-blog-cover" src={a.cover_url} alt="" loading="lazy" decoding="async" />}
           <b style={{ color: "#e2e8f0", fontSize: 16 }}>{a.title}</b>
           <p className="biz-sub" style={{ marginTop: 6, marginBottom: 0 }}>{a.excerpt}</p>
           <small style={{ color: "#475569" }}>{new Date(a.created_at).toLocaleDateString("fa-IR")}</small>

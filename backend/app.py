@@ -306,6 +306,14 @@ def seed_all():
     db.session.commit()
     print("✅ All seed data committed.\n")
 
+    # MahAI round-6: داده‌های نمونه پربار همه بخش‌ها (فروشگاه/دوره/انجمن/آزمون/بلاگ)
+    try:
+        from seed_demo import seed_demo
+        seed_demo()
+    except Exception as e:
+        db.session.rollback()
+        print('[seed_demo] skipped:', repr(e))
+
 if __name__ == '__main__':
     app, socketio = create_app()
     print("="*50)

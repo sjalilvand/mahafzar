@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from app import create_app
-app, _ = create_app()
-with app.app_context():
+"""داده‌های نمونه فروشگاه (نسخه اول) — حالا به‌صورت تابع قابل فراخوانی از seed_demo
+اجرای مستقیم: python seed_shop.py"""
+import json
+from datetime import datetime, timedelta
+
+
+def run_shop_seed():
     from routes.shop import (ShopCategory, ShopProduct, ShopArticle,
                              ShopReview, ShopBundle)
     from models import db
-    from datetime import datetime, timedelta
-    import json
     cats = {'cat-sw': 'نرم‌افزارهای مهندسی', 'cat-ai': 'ابزارهای هوش مصنوعی', 'cat-plugin': 'پلاگین و افزونه'}
     for slug, name in cats.items():
         if not ShopCategory.query.filter_by(slug=slug).first():
@@ -114,3 +116,10 @@ with app.app_context():
     print('SEED_SHOP_OK products=%d articles=%d cats=%d reviews=%d bundles=%d' % (
         ShopProduct.query.count(), ShopArticle.query.count(), ShopCategory.query.count(),
         ShopReview.query.count(), ShopBundle.query.count()))
+
+
+if __name__ == '__main__':
+    from app import create_app
+    app, _ = create_app()
+    with app.app_context():
+        run_shop_seed()

@@ -223,6 +223,11 @@ export default function ProductDetail() {
   return (
     <div className="biz-page" style={{ maxWidth: 950 }}>
       {p.flash_active && <span className="flash-badge">⚡ فروش فوق‌العاده — فرصت محدود!</span>}
+      <div className={"mh-pd-hero" + (p.image_url ? "" : " no-img")}>
+        {p.image_url
+          ? <img src={p.image_url} alt={p.name} />
+          : <Package size={64} strokeWidth={1.1} />}
+      </div>
       <h1 className="biz-title">{p.name}</h1>
       <div className="mh-pd-topline">
         <Stars rating={p.rating} count={p.rating_count} size={16} />
