@@ -169,14 +169,18 @@ export default defineConfig({
           }
         ]
       },
+      // مهم: SW فقط در بیلد نهایی فعال باشد؛ در حالت dev باعث صفحه‌سفید
+      // می‌شود (کش index.html قدیمی + ERR_CONNECTION_REFUSED برای فایل‌های dev)
       devOptions: {
-        enabled: true
+        enabled: false
       }
     })
   ],
   server: {
     port: 3000,
     host: true,
+    // اگر پورت 3000 اشغال بود، خطای واضح بده نه جابه‌جایی بی‌صدا به 3001
+    strictPort: true,
     proxy: {
       '/api': { target: 'http://localhost:5000', changeOrigin: true },
       '/socket.io': { target: 'http://localhost:5000', ws: true },
