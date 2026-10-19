@@ -3,8 +3,10 @@ from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import db, User, PaymentPlan, Payment, UserSubscription, PaymentDiscount, Wallet, WalletTransaction
 from datetime import datetime, timedelta
-import requests
 import json
+
+# نکته: ماژول requests عمداً lazy ایمپورت می‌شود (داخل توابع) تا اگر در venv
+# نصب نبود، فقط درگاه پرداخت خطا بدهد و کل بک‌اند بالا نیاید.
 
 payments_ns = Namespace('payments', description='Payment operations')
 
@@ -246,6 +248,7 @@ class WalletDeposit(Resource):
 def send_to_zarinpal(payment_id, amount, user_id):
     """ارسال درخواست به زرین‌پال"""
     try:
+        import requests  # lazy import
         data = {
             "merchant_id": ZARINPAL_MERCHANT,
             "amount": amount,
@@ -281,6 +284,7 @@ def send_to_zarinpal(payment_id, amount, user_id):
 def verify_zarinpal(authority, amount):
     """تایید پرداخت زرین‌پال"""
     try:
+        import requests  # lazy import
         data = {
             "merchant_id": ZARINPAL_MERCHANT,
             "amount": amount,
