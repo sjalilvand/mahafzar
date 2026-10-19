@@ -8,7 +8,7 @@ import Stars from "../../components/common/Stars";
 import WishlistButton from "../../components/common/WishlistButton";
 import {
   ShieldCheck, Headset, RefreshCw, Wallet, Package, Heart,
-  ShoppingBag, MessageSquareQuote, Gift, Check, Scale
+  ShoppingBag, MessageSquareQuote, Gift, Check, Scale, Ticket, Copy
 } from "lucide-react";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
@@ -121,11 +121,20 @@ function ReviewsSection({ slug }) {
 /* ---------- باکس باندل تخفیفی (خرید با هم) ---------- */
 function BundleBox({ bundle, onAddAll }) {
   const [picked, setPicked] = useState(() => new Set(bundle.items.map(i => i.id)));
+  const [copied, setCopied] = useState(false);
   const sel = bundle.items.filter(i => picked.has(i.id));
   const orig = sel.reduce((s, i) => s + i.final_price, 0);
   const allPicked = sel.length === bundle.items.length;
   const final = allPicked ? Math.round(orig * (100 - bundle.discount_percent) / 100) : orig;
   const save = orig - final;
+  const cpn = bundle.coupon;
+
+  const copyCode = () => {
+    if (!cpn) return;
+    navigator.clipboard && navigator.clipboard.writeText(cpn.code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
 
   const toggle = (id) => setPicked(prev => {
     const n = new Set(prev);
@@ -139,6 +148,16 @@ function BundleBox({ bundle, onAddAll }) {
         <span className="mh-bd-badge">{fmt(bundle.discount_percent)}٪ تخفیف خرید با هم</span>
       </b>
       {bundle.description && <p className="mh-bd-desc">{bundle.description}</p>}
+      {cpn && (
+        <div className="mh-bd-coupon">
+          <Ticket size={15} />
+          <span>کد تخفیف اختصاصی این باندل:</span>
+          <code onClick={copyCode} title="برای کپی کلیک کنید">{cpn.code}</code>
+          {copied ? <b className="mh-bd-copied">کپی شد ✓</b>
+                  : <button onClick={copyCode} className="mh-bd-copybtn"><Copy size={11} /> کپی</button>}
+          <i>٪{fmt(cpn.percent)} تخفیف بیشتر در پرداخت — فقط با خرید کامل باندل</i>
+        </div>
+      )}
       <div className="mh-bd-items">
         {bundle.items.map((it, idx) => (
           <React.Fragment key={it.id}>

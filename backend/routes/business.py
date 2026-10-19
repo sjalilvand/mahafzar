@@ -80,6 +80,22 @@ class BizCoupon(db.Model):
     used_count = db.Column(db.Integer, default=0)
     expires_at = db.Column(db.DateTime, nullable=True)
     active = db.Column(db.Boolean, default=True)
+    # MahAI round-4: کوپن اختصاصی باندل — scope='all' عمومی، scope='bundle' فقط برای باندل خاص
+    scope = db.Column(db.String(20), default='all', server_default='all')
+    bundle_id = db.Column(db.Integer, nullable=True, index=True)
+
+    def to_dict(self):
+        return {'id': self.id, 'code': self.code, 'percent': self.percent,
+                'max_uses': self.max_uses, 'used_count': self.used_count or 0,
+                'expires_at': self.expires_at.isoformat() if self.expires_at else None,
+                'active': self.active, 'scope': self.scope or 'all',
+                'bundle_id': self.bundle_id}
+
+    def live(self):
+        """کوپن فعال و داخل بازه اعتبار و سهمیه"""
+        if not self.active: return False
+        if self.expires_at and self.expires_at < datetime.utcnow(): return False
+        return (self.used_count or 0) < self.max_uses
 
 
 class BizWalletTx(db.Model):
@@ -182,6 +198,24 @@ class CouponValidate(Resource):
         now = datetime.utcnow()
         if (not c) or (not c.active) or (c.expires_at and c.expires_at < now) or (c.used_count >= c.max_uses):
             return {'valid': False, 'message': 'کد تخفیف نامعتبر یا منقضی است'}, 200
+        # MahAI round-4: کوپن اختصاصی باندل — فقط وقتی همه اقلام باندل در سبد باشد معتبر است
+        if (c.scope or 'all') == 'bundle' and c.bundle_id:
+            from routes.shop import ShopBundle
+            b = db.session.get(ShopBundle, c.bundle_id)
+            if not b or not b.is_active:
+                return {'valid': False, 'message': 'باندل این کد تخفیف دیگر فعال نیست'}, 200
+            need = set(b.id_list())
+            have = set()
+            for it in (d.get('items') or []):
+                try: have.add(int(it if not isinstance(it, dict) else it.get('product_id')))
+                except (TypeError, ValueError): continue
+            if not need.issubset(have):
+                return {'valid': False, 'scope': 'bundle', 'bundle_id': b.id,
+                        'bundle_title': b.title,
+                        'message': 'این کد مخصوص باندل «%s» است؛ ابتدا همه محصولات باندل را به سبد اضافه کنید' % b.title}, 200
+            return {'valid': True, 'percent': c.percent, 'scope': 'bundle', 'bundle_id': b.id,
+                    'bundle_title': b.title,
+                    'message': 'کد اختصاصی باندل «%s»: %d درصد تخفیف بیشتر' % (b.title, c.percent)}, 200
         return {'valid': True, 'percent': c.percent,
                 'message': 'کد معتبر: %d درصد تخفیف' % c.percent}, 200
 
@@ -195,6 +229,7 @@ class AdminCoupons(Resource):
         rows = BizCoupon.query.order_by(BizCoupon.id.desc()).limit(200).all()
         return {'coupons': [{'id': c.id, 'code': c.code, 'percent': c.percent,
                              'used': c.used_count, 'max': c.max_uses, 'active': c.active,
+                             'scope': c.scope or 'all', 'bundle_id': c.bundle_id,
                              'expires_at': c.expires_at.isoformat() if c.expires_at else None}
                             for c in rows]}, 200
 

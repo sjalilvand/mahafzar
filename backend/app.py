@@ -146,6 +146,9 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        # MahAI round-4: مهاجرت سبک ستون‌های کوپن باندل روی دیتابیس‌های موجود
+        from routes.shop import _light_migrate
+        _light_migrate()
         seed_all()
 
     return app, socketio

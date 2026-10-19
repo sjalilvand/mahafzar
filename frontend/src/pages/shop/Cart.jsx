@@ -46,11 +46,17 @@ export default function Cart() {
   const afterBundle = subtotal - bundleDiscount;
   const pct = couponInfo && couponInfo.valid ? couponInfo.percent : 0;
   const total = Math.round(afterBundle * (100 - pct) / 100);
+  // MahAI round-4: باندل‌هایی که کوپن اختصاصی فعال دارند و اقلامشان کامل در سبد است
+  const bundleCoupons = bundles.filter(b => b.coupon && (b.items || []).length &&
+                                           (b.items || []).every(it => cartIds.has(it.id)));
 
   const checkCoupon = async () => {
     if (!coupon.trim()) return;
     try {
-      const r = await client.post("/business/coupons/validate", { code: coupon });
+      // MahAI round-4: ارسال اقلام سبد برای اعتبارسنجی کوپن اختصاصی باندل
+      const r = await client.post("/business/coupons/validate", {
+        code: coupon,
+        items: items.map(i => ({ product_id: i.id, qty: i.qty })) });
       setCouponInfo(r.data);
     } catch { setCouponInfo({ valid: false, message: "خطا در بررسی کد" }); }
   };
@@ -142,6 +148,16 @@ export default function Cart() {
             </div>
             {couponInfo && <p style={{ marginTop: 10, color: couponInfo.valid ? "#10b981" : "#f87171", fontWeight: 700 }}>
               {couponInfo.valid ? "✅ " + couponInfo.message : "❌ " + (couponInfo.message || "کد نامعتبر")}</p>}
+            {bundleCoupons.length > 0 && !pct && (
+              <div style={{ marginTop: 10 }}>
+                {bundleCoupons.map(b => (
+                  <p key={b.id} className="co-bundle-coupon-hint" style={{ margin: "4px 0" }}>
+                    🎟 برای باندل «{b.title}» کد اختصاصی <code>{b.coupon.code}</code> دارید
+                    — با وارد کردن آن <b>٪{fmt(b.coupon.percent)}</b> تخفیف بیشتر بگیرید.
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
           <div className="biz-card co-summary">
             <b>خلاصه سفارش</b>

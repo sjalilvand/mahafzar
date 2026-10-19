@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """MahAI Shop - products, categories, articles, orders, checkout,
-star ratings (reviews) and discount bundles"""
+star ratings (reviews), discount bundles, exclusive bundle coupons,
+admin sales overview and review email notifications"""
 from datetime import datetime, timedelta
 import json, re, secrets
 from flask import request
@@ -8,8 +9,24 @@ from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import db, User
 from routes.business import _uid, _is_admin, BizCoupon, BizWalletTx
+from services.mail_service import notify_new_review
 
 shop_ns = Namespace('shop', description='Frooshgah-e software products va maqalat')
+
+
+def _light_migrate():
+    """مهاجرت سبک برای دیتابیس‌های موجود (SQLite): افزودن ستون‌های تازه اگر نبودند"""
+    from sqlalchemy import text
+    stmts = [
+        "ALTER TABLE biz_coupons ADD COLUMN scope VARCHAR(20) DEFAULT 'all'",
+        "ALTER TABLE biz_coupons ADD COLUMN bundle_id INTEGER",
+    ]
+    for s in stmts:
+        try:
+            db.session.execute(text(s))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
 
 
 def _slugify(s):
@@ -41,15 +58,31 @@ def _rating_info(pid):
     return round(sum(r.rating for r in rows) / n, 1), n
 
 
+def _coupon_dict(c):
+    """نمای عمومی کوپن (برای نمایش کد روی باندل)"""
+    return {'code': c.code, 'percent': c.percent,
+            'expires_at': c.expires_at.isoformat() if c.expires_at else None,
+            'remaining': max(0, (c.max_uses or 0) - (c.used_count or 0))}
+
+
+def _bundle_live_coupon(bid):
+    """کوپن اختصاصیِ فعالِ یک باندل (برای نمایش عمومی روی باکس باندل)"""
+    c = BizCoupon.query.filter_by(scope='bundle', bundle_id=bid, active=True)\
+        .order_by(BizCoupon.id.desc()).first()
+    return c if (c and c.live()) else None
+
+
 def _bundle_dict(b):
     items = [ShopProduct.query.get(i) for i in b.id_list()]
     items = [x for x in items if x and x.is_active]
     orig = sum(_final_price(x) for x in items)
     final = int(orig * (100 - (b.discount_percent or 0)) / 100)
+    bc = _bundle_live_coupon(b.id)
     return {'id': b.id, 'title': b.title, 'slug': b.slug, 'description': b.description,
             'discount_percent': b.discount_percent, 'is_active': b.is_active,
             'items': [x.to_dict() for x in items],
-            'original_total': orig, 'final_total': final, 'save': orig - final}
+            'original_total': orig, 'final_total': final, 'save': orig - final,
+            'coupon': _coupon_dict(bc) if bc else None}
 
 
 class ShopCategory(db.Model):
@@ -248,6 +281,7 @@ class ProductReviews(Resource):
         uname = (u.full_name or u.username) if u else 'کاربر'
         comment = (d.get('comment') or '').strip()[:1500]
         rev = ShopReview.query.filter_by(product_id=p.id, user_id=uid).first()
+        is_new = rev is None
         if rev:
             rev.rating = rating; rev.comment = comment; rev.created_at = datetime.utcnow()
         else:
@@ -256,6 +290,12 @@ class ProductReviews(Resource):
             db.session.add(rev)
         db.session.commit()
         avg, cnt = _rating_info(p.id)
+        # MahAI round-4: اعلان ایمیلی «نظر جدید» به مدیران (فقط نظر تازه، نه ویرایش؛ fail-safe)
+        if is_new:
+            try:
+                notify_new_review(rev, p)
+            except Exception:
+                pass
         return {'message': 'نظر شما با موفقیت ثبت شد', 'rating': avg,
                 'count': cnt, 'review': rev.to_dict()}, 201
 
@@ -332,18 +372,26 @@ class Checkout(Resource):
                 bp = ShopProduct.query.get(pid)
                 if bp and bp.is_active:
                     bsub += _final_price(bp)
-            d = int(bsub * (b.discount_percent or 0) / 100)
-            if d > 0:
-                bundle_discount += d
-                bundles_applied.append({'title': b.title, 'discount_percent': b.discount_percent, 'discount': d})
+            bd = int(bsub * (b.discount_percent or 0) / 100)
+            if bd > 0:
+                bundle_discount += bd
+                bundles_applied.append({'title': b.title, 'discount_percent': b.discount_percent, 'discount': bd})
         subtotal_after_bundle = subtotal - bundle_discount
         coupon_code = ''
         coupon_pct = 0
+        coupon_scope = 'all'
         code = (d.get('coupon_code') or '').strip().upper()
         if code:
             c = BizCoupon.query.filter_by(code=code).first()
-            now = datetime.utcnow()
-            if c and c.active and (not c.expires_at or c.expires_at > now) and c.used_count < c.max_uses:
+            if c and c.live():
+                # MahAI round-4: کوپن اختصاصی باندل — فقط با سبد کامل باندل قابل استفاده است
+                if (c.scope or 'all') == 'bundle' and c.bundle_id:
+                    b = db.session.get(ShopBundle, c.bundle_id)
+                    b_ids = set(b.id_list()) if b else set()
+                    if not b or not b.is_active or not b_ids.issubset(cart_ids):
+                        return {'message': 'کد «%s» مخصوص باندل «%s» است؛ همه محصولات باندل باید در سبد باشند'
+                                % (code, b.title if b else 'موردنظر'), 'need_bundle': True}, 400
+                    coupon_scope = 'bundle'
                 coupon_pct = c.percent; coupon_code = c.code
         total = int(subtotal_after_bundle * (100 - coupon_pct) / 100)
         uid = _uid()
@@ -367,7 +415,7 @@ class Checkout(Resource):
         return {'message': 'خرید با موفقیت انجام شد', 'order': {
             'ref_code': ref, 'total': total, 'subtotal': subtotal,
             'bundle_discount': bundle_discount, 'bundles': bundles_applied,
-            'coupon_discount': coupon_pct, 'status': o.status,
+            'coupon_discount': coupon_pct, 'coupon_scope': coupon_scope, 'status': o.status,
             'items': [{'title': i.title, 'unit_price': i.unit_price, 'qty': i.qty,
                        'file_url': ShopProduct.query.get(i.product_id).file_url if ShopProduct.query.get(i.product_id) else ''}
                       for i in o.items]}}, 201
@@ -609,4 +657,104 @@ class AdminOrders(Resource):
                             'status': o.status, 'coupon': o.coupon_code,
                             'created_at': o.created_at.isoformat(),
                             'items': [{'title': i.title, 'qty': i.qty, 'unit_price': i.unit_price}
-                                      for i in o.items]} for o in rows]}, 200
+                                      for i in o.items]} for o in rows]}
+
+
+# ---------------- ADMIN: نمودار فروش ----------------
+@shop_ns.route('/admin/sales-overview')
+class AdminSalesOverview(Resource):
+    """داده‌های نمودار فروش: درآمد و تعداد سفارش روزانه + KPI + پرفروش‌ها"""
+    @jwt_required()
+    def get(self):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        try:
+            days = max(7, min(60, int(request.args.get('days', 14))))
+        except (TypeError, ValueError):
+            days = 14
+        start = datetime.utcnow() - timedelta(days=days - 1)
+        start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+        orders = ShopOrder.query.filter(ShopOrder.created_at >= start,
+                                        ShopOrder.status == 'paid').all()
+
+        # تقویم روزها (حتی بدون فروش)
+        daily = {}
+        for i in range(days):
+            day = start + timedelta(days=i)
+            daily[day.strftime('%Y-%m-%d')] = {'date': day.strftime('%Y-%m-%d'),
+                                               'label': day.strftime('%m/%d'),
+                                               'revenue': 0, 'orders': 0, 'items': 0}
+        items_sold = 0
+        for o in orders:
+            k = o.created_at.strftime('%Y-%m-%d')
+            if k in daily:
+                daily[k]['revenue'] += o.total or 0
+                daily[k]['orders'] += 1
+                daily[k]['items'] += sum(it.qty for it in o.items)
+            items_sold += sum(it.qty for it in o.items)
+        series = [daily[k] for k in sorted(daily.keys())]
+
+        revenue = sum(o.total or 0 for o in orders)
+        n_orders = len(orders)
+        top = ShopProduct.query.filter(ShopProduct.sales_count > 0)\
+            .order_by(ShopProduct.sales_count.desc()).limit(5).all()
+        return {
+            'days': days,
+            'kpi': {'revenue': revenue, 'orders': n_orders, 'items_sold': items_sold,
+                    'avg_order': int(revenue / n_orders) if n_orders else 0},
+            'series': series,
+            'top_products': [{'id': p.id, 'name': p.name, 'sales_count': p.sales_count,
+                              'final_price': _final_price(p)} for p in top],
+        }, 200
+
+
+# ---------------- ADMIN: کوپن اختصاصی باندل ----------------
+@shop_ns.route('/admin/bundles/<int:bid>/coupon')
+class AdminBundleCoupon(Resource):
+    @jwt_required()
+    def get(self, bid):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        b = db.session.get(ShopBundle, bid)
+        if not b: return {'message': 'باندل یافت نشد'}, 404
+        rows = BizCoupon.query.filter_by(scope='bundle', bundle_id=bid)\
+            .order_by(BizCoupon.id.desc()).limit(10).all()
+        return {'coupons': [c.to_dict() for c in rows]}, 200
+
+    @jwt_required()
+    def post(self, bid):
+        """ساخت/بازتولید کوپن اختصاصی باندل"""
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        b = db.session.get(ShopBundle, bid)
+        if not b: return {'message': 'باندل یافت نشد'}, 404
+        d = request.get_json(silent=True) or {}
+        try:
+            percent = max(1, min(90, int(d.get('percent', 10))))
+            max_uses = max(1, min(100000, int(d.get('max_uses', 100))))
+            exp_days = max(0, min(3650, int(d.get('expires_days', 30))))
+        except (TypeError, ValueError):
+            return {'message': 'مقادیر عددی نامعتبر است'}, 400
+        custom = (d.get('code') or '').strip().upper()
+        code = custom or ('BND%d-%s' % (bid, secrets.token_hex(2).upper()))
+        if not re.fullmatch(r'[A-Z0-9-]{3,40}', code):
+            return {'message': 'کد فقط حروف انگلیسی، عدد و خط تیره (حداقل ۳ کاراکتر)'}, 400
+        if BizCoupon.query.filter_by(code=code).first():
+            return {'message': 'این کد قبلا استفاده شده است'}, 400
+        # کوپن قبلی باندل غیرفعال می‌شود تا فقط یک کد اختصاصی فعال بماند
+        for old in BizCoupon.query.filter_by(scope='bundle', bundle_id=bid, active=True).all():
+            old.active = False
+        c = BizCoupon(code=code, percent=percent, max_uses=max_uses,
+                      expires_at=(datetime.utcnow() + timedelta(days=exp_days)) if exp_days else None,
+                      active=True, scope='bundle', bundle_id=bid)
+        db.session.add(c)
+        db.session.commit()
+        return {'message': 'کوپن اختصاصی باندل ساخته شد', 'coupon': c.to_dict(),
+                'bundle': _bundle_dict(b)}, 201
+
+    @jwt_required()
+    def delete(self, bid):
+        """غیرفعال‌سازی کوپن‌های اختصاصی باندل"""
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        n = 0
+        for c in BizCoupon.query.filter_by(scope='bundle', bundle_id=bid, active=True).all():
+            c.active = False; n += 1
+        db.session.commit()
+        return {'message': 'کوپن اختصاصی غیرفعال شد' if n else 'کوپن فعالی وجود نداشت'}, 200

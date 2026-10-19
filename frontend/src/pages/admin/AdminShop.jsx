@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
 import client from "../../api/client";
-import { Gift, MessageSquareQuote, Pencil, Trash2, X, Check } from "lucide-react";
+import { Gift, MessageSquareQuote, Pencil, Trash2, X, Check, Ticket, Copy,
+         BarChart3, Banknote, ShoppingCart, PackageCheck, ReceiptText, RefreshCw } from "lucide-react";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS, CategoryScale, LinearScale, PointElement,
+  LineElement, BarElement, Title, Tooltip, Legend, Filler
+} from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement,
+                 BarElement, Title, Tooltip, Legend, Filler);
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 const emptyP = { name: "", short_desc: "", description: "", price: 0, discount_percent: 0,
                  category_id: "", image_url: "", file_url: "", flash_hours: 0, featured: false };
 const emptyA = { title: "", excerpt: "", body: "", is_published: true };
 const emptyB = { title: "", description: "", discount_percent: 10, product_ids: [], is_active: true };
+const emptyC = { percent: 15, max_uses: 100, expires_days: 30, code: "" };
 const stars = r => "★".repeat(r) + "☆".repeat(5 - r);
 
 export default function AdminShop() {
@@ -18,6 +28,10 @@ export default function AdminShop() {
   const [orders, setOrders] = useState([]);
   const [bundles, setBundles] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [sales, setSales] = useState(null);
+  const [salesDays, setSalesDays] = useState(14);
+  const [cf, setCf] = useState(emptyC);
+  const [couponBid, setCouponBid] = useState(null);
   const [pf, setPf] = useState(emptyP);
   const [af, setAf] = useState(emptyA);
   const [bf, setBf] = useState(emptyB);
@@ -29,16 +43,18 @@ export default function AdminShop() {
 
   const load = async () => {
     try {
-      const [p, c, a, o, b, rv] = await Promise.all([
+      const [p, c, a, o, b, rv, sv] = await Promise.all([
         client.get("/shop/admin/products"), client.get("/shop/admin/categories"),
         client.get("/shop/admin/articles"), client.get("/shop/admin/orders"),
-        client.get("/shop/admin/bundles"), client.get("/shop/admin/reviews")]);
+        client.get("/shop/admin/bundles"), client.get("/shop/admin/reviews"),
+        client.get(`/shop/admin/sales-overview?days=${salesDays}`)]);
       setProducts(p.data.products || []); setCats(c.data.categories || []);
       setArticles(a.data.articles || []); setOrders(o.data.orders || []);
       setBundles(b.data.bundles || []); setReviews(rv.data.reviews || []);
+      setSales(sv.data);
     } catch (e) { if (e.response && [401, 403, 422].includes(e.response.status)) setDenied(true); }
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [salesDays]);
 
   const errText = (e) => (e.response && e.response.data && e.response.data.message) || "خطا";
 
@@ -102,6 +118,60 @@ export default function AdminShop() {
     await client.delete("/shop/admin/bundles/" + b.id); load();
   };
 
+  /* ---------------- کوپن اختصاصی باندل ---------------- */
+  const openCouponForm = (b) => {
+    setCouponBid(b.id); setCf(emptyC);
+  };
+  const saveBundleCoupon = async (b) => {
+    setMsg("");
+    try {
+      const r = await client.post(`/shop/admin/bundles/${b.id}/coupon`, {
+        percent: Number(cf.percent) || 10, max_uses: Number(cf.max_uses) || 100,
+        expires_days: Number(cf.expires_days) || 0, code: cf.code });
+      setMsg("✅ " + r.data.message + " — کد: " + r.data.coupon.code);
+      setCouponBid(null); load();
+    } catch (e) { setMsg(errText(e)); }
+  };
+  const dropBundleCoupon = async (b) => {
+    if (!window.confirm(`کوپن اختصاصی باندل «${b.title}» غیرفعال شود؟`)) return;
+    try { const r = await client.delete(`/shop/admin/bundles/${b.id}/coupon`); setMsg("✅ " + r.data.message); }
+    catch (e) { setMsg(errText(e)); }
+    load();
+  };
+  const copyCode = (code) => {
+    navigator.clipboard && navigator.clipboard.writeText(code);
+    setMsg("📋 کد «" + code + "» کپی شد");
+  };
+
+  /* ---------------- نمودار فروش ---------------- */
+  const chartData = sales ? {
+    labels: (sales.series || []).map(s => s.label),
+    datasets: [
+      { label: "درآمد (تومان)", data: (sales.series || []).map(s => s.revenue),
+        borderColor: "#22d3ee", backgroundColor: "rgba(34,211,238,.16)",
+        fill: true, tension: .38, pointRadius: 2.5, pointBackgroundColor: "#22d3ee", yAxisID: "y" },
+      { label: "سفارش‌ها", data: (sales.series || []).map(s => s.orders),
+        borderColor: "#fbbf24", backgroundColor: "rgba(251,191,36,.1)",
+        fill: false, tension: .38, pointRadius: 2.5, pointBackgroundColor: "#fbbf24", yAxisID: "y1" },
+    ],
+  } : null;
+  const chartOpts = {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: "index", intersect: false },
+    plugins: { legend: { labels: { color: "#94a3b8", font: { size: 11.5 } } },
+               tooltip: { rtl: true, titleFont: { family: "inherit" } } },
+    scales: {
+      x: { ticks: { color: "#64748b", font: { size: 10.5 } }, grid: { color: "rgba(148,163,184,.08)" } },
+      y: { position: "right", ticks: { color: "#22d3ee", font: { size: 10.5 },
+           callback: v => (v >= 1000000 ? (v / 1000000) + "م" : v >= 1000 ? (v / 1000) + "ه" : v) },
+           grid: { color: "rgba(148,163,184,.08)" } },
+      y1: { position: "left", ticks: { color: "#fbbf24", font: { size: 10.5 }, precision: 0 },
+            grid: { drawOnChartArea: false } },
+    },
+  };
+  const maxTopSale = sales && sales.top_products && sales.top_products.length
+    ? Math.max(...sales.top_products.map(t => t.sales_count)) : 0;
+
   /* ---------------- نظرات فروشگاه ---------------- */
   const startEditReview = (r) => {
     setEditRid(r.id);
@@ -123,12 +193,57 @@ export default function AdminShop() {
     <div className="biz-page" style={{ maxWidth: 1050 }}>
       <h1 className="biz-title">مدیریت فروشگاه</h1>
       <div className="biz-tabs">
-        {[["products", "محصولات"], ["cats", "دسته‌ها"], ["bundles", "باندل‌ها"],
+        {[["sales", "نمای فروش"], ["products", "محصولات"], ["cats", "دسته‌ها"], ["bundles", "باندل‌ها"],
           ["reviews", "نظرات"], ["articles", "مقالات"], ["orders", "سفارش‌ها"]].map(([k, t]) => (
           <button key={k} className={"biz-tab" + (tab === k ? " active" : "")} onClick={() => setTab(k)}>{t}</button>
         ))}
       </div>
       {msg && <p style={{ color: "#22d3ee" }}>{msg}</p>}
+
+      {tab === "sales" && (
+        <>
+          <div className="mh-kpi-grid">
+            <div className="mh-kpi"><Banknote size={20} />
+              <div><small>درآمد {fmt(salesDays)} روز</small><b>{fmt(sales?.kpi?.revenue)}</b><i>تومان</i></div></div>
+            <div className="mh-kpi"><ShoppingCart size={20} />
+              <div><small>سفارش‌های پرداخت‌شده</small><b>{fmt(sales?.kpi?.orders)}</b><i>سفارش</i></div></div>
+            <div className="mh-kpi"><PackageCheck size={20} />
+              <div><small>اقلام فروش‌رفته</small><b>{fmt(sales?.kpi?.items_sold)}</b><i>مورد</i></div></div>
+            <div className="mh-kpi"><ReceiptText size={20} />
+              <div><small>میانگین هر سفارش</small><b>{fmt(sales?.kpi?.avg_order)}</b><i>تومان</i></div></div>
+          </div>
+
+          <div className="biz-card">
+            <b style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <BarChart3 size={17} style={{ color: "#22d3ee" }} /> نمودار فروش
+              <span style={{ marginInlineStart: "auto", display: "flex", gap: 6, alignItems: "center" }}>
+                {[7, 14, 30].map(d => (
+                  <button key={d} className={"biz-btn-sm" + (salesDays === d ? " mh-days-on" : "")}
+                          onClick={() => setSalesDays(d)}>{fmt(d)} روز</button>
+                ))}
+                <button className="biz-btn-sm" onClick={load} title="به‌روزرسانی"><RefreshCw size={11} /></button>
+              </span>
+            </b>
+            <div className="mh-sales-chart">
+              {chartData ? <Line data={chartData} options={chartOpts} /> : <p className="biz-sub">در حال بارگذاری...</p>}
+            </div>
+          </div>
+
+          <div className="biz-card">
+            <b>پرفروش‌ترین محصولات</b>
+            {(sales?.top_products || []).map(t => (
+              <div key={t.id} className="mh-top-row">
+                <span className="mh-top-name">{t.name}</span>
+                <span className="mh-top-bar-wrap">
+                  <span className="mh-top-bar" style={{ width: maxTopSale ? (t.sales_count / maxTopSale * 100) + "%" : 0 }} />
+                </span>
+                <b className="mh-top-val">{fmt(t.sales_count)} فروش</b>
+              </div>
+            ))}
+            {sales && (sales.top_products || []).length === 0 && <p className="biz-sub">هنوز فروشی ثبت نشده است.</p>}
+          </div>
+        </>
+      )}
 
       {tab === "products" && (
         <>
@@ -231,24 +346,66 @@ export default function AdminShop() {
           <div className="biz-card">
             <b>باندل‌ها ({bundles.length})</b>
             {bundles.map(b => (
-              <div key={b.id} className="biz-row">
-                <span>
+              <div key={b.id} className="biz-row" style={{ flexWrap: "wrap" }}>
+                <span style={{ minWidth: 260, flex: 1 }}>
                   <b>{b.title}</b>
                   <small style={{ color: "#64748b", display: "block" }}>
                     تخفیف {b.discount_percent}٪ • {fmt(b.final_total)} T
                     (بدون تخفیف {fmt(b.original_total)} T) • {(b.items || []).map(i => i.name).join(" + ")}
                   </small>
+                  {b.coupon && (
+                    <span className="mh-adm-coupon-chip">
+                      <Ticket size={13} />
+                      <code onClick={() => copyCode(b.coupon.code)} title="برای کپی کلیک کنید">{b.coupon.code}</code>
+                      <i>٪{fmt(b.coupon.percent)} • باقی‌مانده {fmt(b.coupon.remaining)}</i>
+                      <button className="mh-cp-mini" onClick={() => copyCode(b.coupon.code)}><Copy size={11} /></button>
+                      <button className="mh-cp-mini danger" onClick={() => dropBundleCoupon(b)} title="غیرفعال‌سازی"><Trash2 size={11} /></button>
+                    </span>
+                  )}
                 </span>
-                <span style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                <span style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
                   <span className={"biz-chip " + (b.is_active ? "biz-answered" : "biz-closed")}>
                     {b.is_active ? "فعال" : "غیرفعال"}
                   </span>
+                  <button className="biz-btn-sm" onClick={() => openCouponForm(b)}>
+                    <Ticket size={11} /> {b.coupon ? "کوپن جدید" : "کوپن اختصاصی"}
+                  </button>
                   <button className="biz-btn-sm" onClick={() => editBundle(b)}><Pencil size={11} /> ویرایش</button>
                   <button className="biz-btn-sm" onClick={() => toggleBundleActive(b)}>
                     {b.is_active ? "غیرفعال‌کن" : "فعال‌کن"}
                   </button>
                   <button className="biz-btn-sm danger" onClick={() => delBundle(b)}><Trash2 size={11} /></button>
                 </span>
+
+                {couponBid === b.id && (
+                  <div className="mh-adm-coupon-form">
+                    <b style={{ color: "#e2e8f0", fontSize: 13 }}>
+                      <Ticket size={14} style={{ color: "#22d3ee", verticalAlign: "-3px" }} />{" "}
+                      کوپن اختصاصی برای «{b.title}»
+                    </b>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 8 }}>
+                      <label style={{ color: "#94a3b8", fontSize: 12 }}>درصد تخفیف
+                        <input className="biz-input" type="number" min={1} max={90} value={cf.percent}
+                               onChange={e => setCf({ ...cf, percent: e.target.value })} /></label>
+                      <label style={{ color: "#94a3b8", fontSize: 12 }}>سقف استفاده
+                        <input className="biz-input" type="number" min={1} value={cf.max_uses}
+                               onChange={e => setCf({ ...cf, max_uses: e.target.value })} /></label>
+                      <label style={{ color: "#94a3b8", fontSize: 12 }}>اعتبار (روز، ۰=بی‌پایان)
+                        <input className="biz-input" type="number" min={0} value={cf.expires_days}
+                               onChange={e => setCf({ ...cf, expires_days: e.target.value })} /></label>
+                      <label style={{ color: "#94a3b8", fontSize: 12 }}>کد دلخواه (اختیاری)
+                        <input className="biz-input" placeholder="خالی = تولید خودکار" value={cf.code}
+                               onChange={e => setCf({ ...cf, code: e.target.value })} /></label>
+                    </div>
+                    <p className="biz-sub" style={{ margin: 0 }}>
+                      این کد فقط وقتی همه محصولات باندل در سبد مشتری باشد قابل استفاده است و با کد دیگر جایگزین می‌شود.
+                    </p>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button className="biz-btn" onClick={() => saveBundleCoupon(b)}><Check size={14} /> ساخت کوپن</button>
+                      <button className="biz-btn-sm danger" onClick={() => setCouponBid(null)}><X size={12} /> انصراف</button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
             {bundles.length === 0 && <p className="biz-sub">هنوز باندلی ساخته نشده است.</p>}
