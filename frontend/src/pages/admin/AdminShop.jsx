@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import client from "../../api/client";
 import { Gift, MessageSquareQuote, Pencil, Trash2, X, Check, Ticket, Copy,
-         BarChart3, Banknote, ShoppingCart, PackageCheck, ReceiptText, RefreshCw } from "lucide-react";
+         BarChart3, Banknote, ShoppingCart, PackageCheck, ReceiptText, RefreshCw, Download } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
@@ -143,6 +143,22 @@ export default function AdminShop() {
     setMsg("📋 کد «" + code + "» کپی شد");
   };
 
+  /* ---------------- خروجی CSV نمودار فروش ---------------- */
+  const downloadCsv = async () => {
+    setMsg("");
+    try {
+      const r = await client.get(`/shop/admin/sales-overview/export?days=${salesDays}`,
+                                 { responseType: "blob" });
+      const url = URL.createObjectURL(r.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mahafzar-sales-${salesDays}d-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      setMsg("✅ فایل CSV فروش دانلود شد");
+    } catch (e) { setMsg("خطا در دریافت فایل CSV"); }
+  };
+
   /* ---------------- نمودار فروش ---------------- */
   const chartData = sales ? {
     labels: (sales.series || []).map(s => s.label),
@@ -222,6 +238,9 @@ export default function AdminShop() {
                           onClick={() => setSalesDays(d)}>{fmt(d)} روز</button>
                 ))}
                 <button className="biz-btn-sm" onClick={load} title="به‌روزرسانی"><RefreshCw size={11} /></button>
+                <button className="biz-btn-sm" onClick={downloadCsv} title="خروجی CSV سازگار با اکسل">
+                  <Download size={11} /> دانلود CSV
+                </button>
               </span>
             </b>
             <div className="mh-sales-chart">

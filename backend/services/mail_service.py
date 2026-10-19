@@ -138,3 +138,60 @@ def notify_new_review(review, product):
                       "💬 نظر جدید برای «%s» (%s/۵)" % (product.name if product else "محصول",
                                                       int(review.rating or 0)),
                       _wrap(body))
+
+
+def _fmt(n):
+    """عدد با جداکننده هزارگان برای نمایش در ایمیل"""
+    try:
+        return "{:,}".format(int(n or 0))
+    except (TypeError, ValueError):
+        return "0"
+
+
+def notify_new_order(order, user=None):
+    """اعلان سفارش جدید فروشگاه به مدیران — fail-safe"""
+    uname = (user.full_name or user.username) if user else ("کاربر #%s" % order.user_id)
+    uemail = (user.email if user else "") or "-"
+    rows = "".join(
+        '<tr>'
+        '<td style="padding:7px 10px;border-bottom:1px solid #334155;color:#e2e8f0">%s</td>'
+        '<td style="padding:7px 10px;border-bottom:1px solid #334155;text-align:center;color:#cbd5e1">%s</td>'
+        '<td style="padding:7px 10px;border-bottom:1px solid #334155;text-align:left;color:#22d3ee;direction:ltr">%s تومان</td>'
+        '</tr>' % (it.title, it.qty, _fmt(it.unit_price))
+        for it in order.items
+    )
+    body = """
+      <p style="margin:0 0 12px">سفارش جدیدی در فروشگاه ثبت و پرداخت شد:</p>
+      <div style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:14px 18px;margin:10px 0">
+        <p style="margin:0 0 8px">کد سفارش: <b style="color:#22d3ee;direction:ltr;display:inline-block">%(ref)s</b></p>
+        <p style="margin:0 0 8px">خریدار: <b>%(uname)s</b> <span style="color:#94a3b8;direction:ltr;display:inline-block">(%(uemail)s)</span></p>
+        <table style="width:100%%;border-collapse:collapse;font-size:13px;margin:10px 0">
+          <thead><tr style="color:#94a3b8">
+            <th style="text-align:right;padding:4px 10px">محصول</th>
+            <th style="padding:4px 10px">تعداد</th>
+            <th style="text-align:left;padding:4px 10px">قیمت واحد</th>
+          </tr></thead>
+          <tbody>%(rows)s</tbody>
+        </table>
+        %(coupon_p)s
+        <p style="margin:10px 0 0;font-size:15px">مبلغ پرداخت‌شده:
+           <b style="color:#10b981">%(total)s تومان</b></p>
+      </div>
+      <p style="margin:12px 0 0;color:#94a3b8;font-size:13px">
+        برای مشاهده کامل، به پنل مدیریت → فروشگاه → سفارش‌ها بروید.</p>
+    """ % {
+        "ref": order.ref_code or "-",
+        "uname": uname,
+        "uemail": uemail,
+        "rows": rows,
+        "coupon_p": ('<p style="margin:4px 0 0;color:#fbbf24">کد تخفیف استفاده‌شده: <b>%s</b></p>'
+                     % order.coupon_code) if order.coupon_code else "",
+        "total": _fmt(order.total),
+    }
+    targets = _recipients()
+    if not targets:
+        log.info("[MAIL] no admin recipient for order %s", order.ref_code)
+        return False, "no recipients"
+    return send_email(targets,
+                      "🛒 سفارش جدید %s — %s تومان (%s)" % (order.ref_code or "", _fmt(order.total), uname),
+                      _wrap(body))

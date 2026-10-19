@@ -9,7 +9,7 @@ from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import db, User
 from routes.business import _uid, _is_admin, BizCoupon, BizWalletTx
-from services.mail_service import notify_new_review
+from services.mail_service import notify_new_review, notify_new_order
 
 shop_ns = Namespace('shop', description='Frooshgah-e software products va maqalat')
 
@@ -412,6 +412,11 @@ class Checkout(Resource):
             c = BizCoupon.query.filter_by(code=coupon_code).first()
             if c: c.used_count = (c.used_count or 0) + 1
         db.session.commit()
+        # MahAI round-5: اعلان ایمیلی سفارش جدید به مدیران (fail-safe)
+        try:
+            notify_new_order(o, db.session.get(User, uid))
+        except Exception:
+            pass
         return {'message': 'خرید با موفقیت انجام شد', 'order': {
             'ref_code': ref, 'total': total, 'subtotal': subtotal,
             'bundle_discount': bundle_discount, 'bundles': bundles_applied,
@@ -661,50 +666,86 @@ class AdminOrders(Resource):
 
 
 # ---------------- ADMIN: نمودار فروش ----------------
+def _sales_data(days):
+    """محاسبه سری روزانه + KPI + پرفروش‌ها (مشترک بین API و خروجی CSV)"""
+    start = datetime.utcnow() - timedelta(days=days - 1)
+    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+    orders = ShopOrder.query.filter(ShopOrder.created_at >= start,
+                                    ShopOrder.status == 'paid').all()
+
+    # تقویم روزها (حتی بدون فروش)
+    daily = {}
+    for i in range(days):
+        day = start + timedelta(days=i)
+        daily[day.strftime('%Y-%m-%d')] = {'date': day.strftime('%Y-%m-%d'),
+                                           'label': day.strftime('%m/%d'),
+                                           'revenue': 0, 'orders': 0, 'items': 0}
+    items_sold = 0
+    for o in orders:
+        k = o.created_at.strftime('%Y-%m-%d')
+        if k in daily:
+            daily[k]['revenue'] += o.total or 0
+            daily[k]['orders'] += 1
+            daily[k]['items'] += sum(it.qty for it in o.items)
+        items_sold += sum(it.qty for it in o.items)
+    series = [daily[k] for k in sorted(daily.keys())]
+
+    revenue = sum(o.total or 0 for o in orders)
+    n_orders = len(orders)
+    top = ShopProduct.query.filter(ShopProduct.sales_count > 0)\
+        .order_by(ShopProduct.sales_count.desc()).limit(5).all()
+    return series, {'revenue': revenue, 'orders': n_orders, 'items_sold': items_sold,
+                    'avg_order': int(revenue / n_orders) if n_orders else 0}, top
+
+
+def _parse_days(default=14):
+    try:
+        return max(7, min(60, int(request.args.get('days', default))))
+    except (TypeError, ValueError):
+        return default
+
+
 @shop_ns.route('/admin/sales-overview')
 class AdminSalesOverview(Resource):
     """داده‌های نمودار فروش: درآمد و تعداد سفارش روزانه + KPI + پرفروش‌ها"""
     @jwt_required()
     def get(self):
         if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
-        try:
-            days = max(7, min(60, int(request.args.get('days', 14))))
-        except (TypeError, ValueError):
-            days = 14
-        start = datetime.utcnow() - timedelta(days=days - 1)
-        start = start.replace(hour=0, minute=0, second=0, microsecond=0)
-        orders = ShopOrder.query.filter(ShopOrder.created_at >= start,
-                                        ShopOrder.status == 'paid').all()
-
-        # تقویم روزها (حتی بدون فروش)
-        daily = {}
-        for i in range(days):
-            day = start + timedelta(days=i)
-            daily[day.strftime('%Y-%m-%d')] = {'date': day.strftime('%Y-%m-%d'),
-                                               'label': day.strftime('%m/%d'),
-                                               'revenue': 0, 'orders': 0, 'items': 0}
-        items_sold = 0
-        for o in orders:
-            k = o.created_at.strftime('%Y-%m-%d')
-            if k in daily:
-                daily[k]['revenue'] += o.total or 0
-                daily[k]['orders'] += 1
-                daily[k]['items'] += sum(it.qty for it in o.items)
-            items_sold += sum(it.qty for it in o.items)
-        series = [daily[k] for k in sorted(daily.keys())]
-
-        revenue = sum(o.total or 0 for o in orders)
-        n_orders = len(orders)
-        top = ShopProduct.query.filter(ShopProduct.sales_count > 0)\
-            .order_by(ShopProduct.sales_count.desc()).limit(5).all()
+        days = _parse_days()
+        series, kpi, top = _sales_data(days)
         return {
             'days': days,
-            'kpi': {'revenue': revenue, 'orders': n_orders, 'items_sold': items_sold,
-                    'avg_order': int(revenue / n_orders) if n_orders else 0},
+            'kpi': kpi,
             'series': series,
             'top_products': [{'id': p.id, 'name': p.name, 'sales_count': p.sales_count,
                               'final_price': _final_price(p)} for p in top],
         }, 200
+
+
+@shop_ns.route('/admin/sales-overview/export')
+class AdminSalesExport(Resource):
+    """خروجی CSV نمودار فروش (UTF-8 BOM — سازگار با اکسل)"""
+    @jwt_required()
+    def get(self):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        import csv, io
+        from flask import Response
+        days = _parse_days()
+        series, kpi, _top = _sales_data(days)
+        buf = io.StringIO()
+        w = csv.writer(buf)
+        w.writerow(['گزارش فروش ماه‌افزار — %s روز' % days])
+        w.writerow(['', '', '', ''])
+        w.writerow(['جمع کل', kpi['revenue'], kpi['orders'], kpi['items_sold']])
+        w.writerow(['میانگین هر سفارش', kpi['avg_order'], '', ''])
+        w.writerow(['', '', '', ''])
+        w.writerow(['تاریخ', 'درآمد (تومان)', 'تعداد سفارش', 'اقلام فروش‌رفته'])
+        for s in series:
+            w.writerow([s['date'], s['revenue'], s['orders'], s['items']])
+        resp = Response(buf.getvalue().encode('utf-8-sig'), mimetype='text/csv')
+        resp.headers['Content-Disposition'] = \
+            'attachment; filename=mahafzar-sales-%dd-%s.csv' % (days, datetime.utcnow().strftime('%Y%m%d'))
+        return resp
 
 
 # ---------------- ADMIN: کوپن اختصاصی باندل ----------------
