@@ -2,9 +2,11 @@
 from app import create_app
 app, _ = create_app()
 with app.app_context():
-    from routes.shop import ShopCategory, ShopProduct, ShopArticle
+    from routes.shop import (ShopCategory, ShopProduct, ShopArticle,
+                             ShopReview, ShopBundle)
     from models import db
     from datetime import datetime, timedelta
+    import json
     cats = {'cat-sw': 'نرم‌افزارهای مهندسی', 'cat-ai': 'ابزارهای هوش مصنوعی', 'cat-plugin': 'پلاگین و افزونه'}
     for slug, name in cats.items():
         if not ShopCategory.query.filter_by(slug=slug).first():
@@ -44,5 +46,57 @@ with app.app_context():
                                        body=ex + '.\n\nاین یک مقاله نمونه است — از پنل مدیریت فروشگاه می‌توانید متن کامل را ویرایش کنید.',
                                        is_published=True))
     db.session.commit()
-    print('SEED_SHOP_OK products=%d articles=%d cats=%d' % (
-        ShopProduct.query.count(), ShopArticle.query.count(), ShopCategory.query.count()))
+    # ---- demo star ratings (so cards show stars out of the box) ----
+    demo_reviews = {
+        'سامانه تصمیم‌یار رَسا': [(5, 'برای اتاق فکر ما فوق‌العاده بود؛ گزارش‌ها دقیق و سریع است.', 'مهندس رضایی'),
+                                 (4, 'پایدار و حرفه‌ای، فقط آموزش اولیه کمی بیشتر وقت می‌برد.', 'شرکت داده‌پرداز'),
+                                 (5, 'پشتیبانی واقعا پاسخگوست. پیشنهاد می‌کنم.', 'مدیر فنی آریا')],
+        'موتور بهینه‌سازی آنتن MahAI Core': [(5, 'نتیجه بهینه‌سازی نسبت به روش دستی چشمگیر بود.', 'دکتر محمدی'),
+                                             (4, 'ابزار قدرتمندی است؛ مستندات خوبی هم دارد.', 'تیم RF پارس')],
+        'داشبورد هوشمند گزارش‌سازی': [(4, 'اتصال به دیتابیس‌های ما راحت انجام شد.', 'کارشناس BI'),
+                                      (5, 'گزارش‌های لحظه‌ای عالی برای جلسات مدیریتی.', 'سازمان فلزات')],
+        'چت‌بات پشتیبانی هوشمند': [(5, 'بیش از ۶۰٪ تیکت‌ها خودکار پاسخ داده می‌شود!', 'فروشگاه آنلاین نور'),
+                                   (4, 'فهم زبان فارسی‌اش خیلی خوب است.', 'پشتیبان نت')],
+        'افزونه گزارش‌گیر حرفه‌ای': [(5, 'دقیقا همان چیزی بود که سامانه ما کم داشت.', 'مهندس کریمی'),
+                                     (4, 'نصب ساده، خروجی‌های تمیز.', 'کاربر سازمانی')],
+        'پکیج شبیه‌سازی صنعتی': [(5, 'شبیه‌سازی خط تولید ما را دقیق پیش‌بینی کرد.', 'شرکت صنعتی بهسان'),
+                                 (5, 'ارزش خرید دارد؛ پشتیبانی هم عالی است.', 'مدیر کارخانه'),
+                                 (4, 'پرکاربرد ولی نیاز به سیستم قوی دارد.', 'کارشناس برنامه‌ریزی')],
+    }
+    for pname, revs in demo_reviews.items():
+        p = ShopProduct.query.filter_by(name=pname).first()
+        if not p:
+            continue
+        for i, (stars, cmt, uname) in enumerate(revs):
+            uid = 900000 + p.id * 10 + i  # pseudo demo users (no login required to seed)
+            if ShopReview.query.filter_by(product_id=p.id, user_id=uid).first():
+                continue
+            db.session.add(ShopReview(product_id=p.id, user_id=uid, username=uname,
+                                      rating=stars, comment=cmt,
+                                      created_at=datetime.utcnow() - timedelta(days=3 * i + 2)))
+    db.session.commit()
+
+    # ---- demo discount bundles (buy-together & save) ----
+    def _pids(names):
+        ids = []
+        for n in names:
+            pp = ShopProduct.query.filter_by(name=n).first()
+            if pp: ids.append(pp.id)
+        return ids
+
+    bundles = [
+        ('پکیج استارتاپ هوشمند', ['چت‌بات پشتیبانی هوشمند', 'داشبورد هوشمند گزارش‌سازی', 'افزونه گزارش‌گیر حرفه‌ای'],
+         10, 'سه ابزار ضروری راه‌اندازی پشتیبانی و گزارش‌سازی هوشمند با تخفیف خرید همزمان.'),
+        ('پکیج کامل سازمانی', ['سامانه تصمیم‌یار رَسا', 'موتور بهینه‌سازی آنتن MahAI Core', 'پکیج شبیه‌سازی صنعتی'],
+         15, 'راهکار کامل تصمیم‌یاری و بهینه‌سازی برای سازمان‌های بزرگ — صرفه‌جویی ویژه.'),
+    ]
+    for title, names, disc, desc in bundles:
+        if not ShopBundle.query.filter_by(title=title).first():
+            db.session.add(ShopBundle(title=title, slug=title.replace(' ', '-'), description=desc,
+                                      discount_percent=disc, product_ids=json.dumps(_pids(names)),
+                                      is_active=True))
+    db.session.commit()
+
+    print('SEED_SHOP_OK products=%d articles=%d cats=%d reviews=%d bundles=%d' % (
+        ShopProduct.query.count(), ShopArticle.query.count(), ShopCategory.query.count(),
+        ShopReview.query.count(), ShopBundle.query.count()))

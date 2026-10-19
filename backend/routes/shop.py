@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-"""MahAI Shop - products, categories, articles, orders, checkout"""
+"""MahAI Shop - products, categories, articles, orders, checkout,
+star ratings (reviews) and discount bundles"""
 from datetime import datetime, timedelta
-import re, secrets
+import json, re, secrets
 from flask import request
 from flask_restx import Namespace, Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import db
+from models import db, User
 from routes.business import _uid, _is_admin, BizCoupon, BizWalletTx
 
 shop_ns = Namespace('shop', description='Frooshgah-e software products va maqalat')
@@ -29,6 +30,26 @@ def _final_price(p):
 
 def _flash_active(p):
     return bool(p.flash_until and p.flash_until > datetime.utcnow())
+
+
+def _rating_info(pid):
+    """(میانگین امتیاز، تعداد نظر) برای یک محصول"""
+    rows = ShopReview.query.filter_by(product_id=pid).all()
+    n = len(rows)
+    if not n:
+        return 0, 0
+    return round(sum(r.rating for r in rows) / n, 1), n
+
+
+def _bundle_dict(b):
+    items = [ShopProduct.query.get(i) for i in b.id_list()]
+    items = [x for x in items if x and x.is_active]
+    orig = sum(_final_price(x) for x in items)
+    final = int(orig * (100 - (b.discount_percent or 0)) / 100)
+    return {'id': b.id, 'title': b.title, 'slug': b.slug, 'description': b.description,
+            'discount_percent': b.discount_percent, 'is_active': b.is_active,
+            'items': [x.to_dict() for x in items],
+            'original_total': orig, 'final_total': final, 'save': orig - final}
 
 
 class ShopCategory(db.Model):
@@ -58,6 +79,7 @@ class ShopProduct(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
+        avg, cnt = _rating_info(self.id)
         return {'id': self.id, 'name': self.name, 'slug': self.slug,
                 'short_desc': self.short_desc, 'description': self.description,
                 'price': self.price, 'discount_percent': self.discount_percent,
@@ -66,7 +88,45 @@ class ShopProduct(db.Model):
                 'category': self.category.name if self.category else None,
                 'category_id': self.category_id, 'image_url': self.image_url,
                 'featured': self.featured, 'sales_count': self.sales_count,
+                'rating': avg, 'rating_count': cnt,
                 'created_at': self.created_at.isoformat() if self.created_at else None}
+
+
+class ShopReview(db.Model):
+    __tablename__ = 'shop_reviews'
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, nullable=False, index=True)
+    user_id = db.Column(db.Integer, nullable=False, index=True)
+    username = db.Column(db.String(80), default='')
+    rating = db.Column(db.Integer, nullable=False, default=5)
+    comment = db.Column(db.Text, default='')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    __table_args__ = (db.UniqueConstraint('product_id', 'user_id', name='uq_shop_review'),)
+
+    def to_dict(self):
+        return {'id': self.id, 'product_id': self.product_id, 'username': self.username,
+                'rating': self.rating, 'comment': self.comment,
+                'created_at': self.created_at.isoformat() if self.created_at else None}
+
+
+class ShopBundle(db.Model):
+    """باندل تخفیفی: خرید چند محصول با هم با تخفیف اضافه"""
+    __tablename__ = 'shop_bundles'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    slug = db.Column(db.String(160), unique=True, nullable=False, index=True)
+    description = db.Column(db.String(400), default='')
+    discount_percent = db.Column(db.Integer, default=0)
+    product_ids = db.Column(db.Text, default='[]')  # JSON list of product ids
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def id_list(self):
+        try:
+            ids = json.loads(self.product_ids or '[]')
+            return [int(i) for i in ids if str(i).isdigit()]
+        except (ValueError, TypeError):
+            return []
 
 
 class ShopArticle(db.Model):
@@ -140,6 +200,8 @@ class Products(Resource):
         else: q = q.order_by(ShopProduct.created_at.desc())
         rows = q.limit(60).all()
         rows.sort(key=lambda p: (not _flash_active(p)))
+        if sort == 'rating':
+            rows.sort(key=lambda p: (-(p.to_dict()['rating']), -p.to_dict()['rating_count']))
         return {'products': [p.to_dict() for p in rows], 'count': len(rows)}, 200
 
 
@@ -154,6 +216,67 @@ class ProductDetail(Resource):
                 ShopProduct.category_id == p.category_id, ShopProduct.id != p.id,
                 ShopProduct.is_active == True).limit(4).all()]
         return {'product': p.to_dict(), 'related': related}, 200
+
+
+@shop_ns.route('/products/<slug>/reviews')
+class ProductReviews(Resource):
+    """نظرات و امتیاز ستاره‌ای محصول"""
+    def get(self, slug):
+        p = ShopProduct.query.filter_by(slug=slug, is_active=True).first()
+        if not p: return {'message': 'محصول یافت نشد'}, 404
+        rows = ShopReview.query.filter_by(product_id=p.id).order_by(ShopReview.created_at.desc()).limit(50).all()
+        avg, cnt = _rating_info(p.id)
+        dist = {str(i): 0 for i in range(1, 6)}
+        for r in rows:
+            dist[str(r.rating)] = dist.get(str(r.rating), 0) + 1
+        return {'reviews': [r.to_dict() for r in rows],
+                'rating': avg, 'count': cnt, 'distribution': dist}, 200
+
+    @jwt_required()
+    def post(self, slug):
+        p = ShopProduct.query.filter_by(slug=slug, is_active=True).first()
+        if not p: return {'message': 'محصول یافت نشد'}, 404
+        d = request.get_json(silent=True) or {}
+        try:
+            rating = int(d.get('rating', 0))
+        except (TypeError, ValueError):
+            rating = 0
+        if rating < 1 or rating > 5:
+            return {'message': 'امتیاز باید بین ۱ تا ۵ ستاره باشد'}, 400
+        uid = _uid()
+        u = db.session.get(User, uid)
+        uname = (u.full_name or u.username) if u else 'کاربر'
+        comment = (d.get('comment') or '').strip()[:1500]
+        rev = ShopReview.query.filter_by(product_id=p.id, user_id=uid).first()
+        if rev:
+            rev.rating = rating; rev.comment = comment; rev.created_at = datetime.utcnow()
+        else:
+            rev = ShopReview(product_id=p.id, user_id=uid, username=uname,
+                             rating=rating, comment=comment)
+            db.session.add(rev)
+        db.session.commit()
+        avg, cnt = _rating_info(p.id)
+        return {'message': 'نظر شما با موفقیت ثبت شد', 'rating': avg,
+                'count': cnt, 'review': rev.to_dict()}, 201
+
+
+@shop_ns.route('/bundles')
+class Bundles(Resource):
+    """فهرست باندل‌های تخفیفی فعال"""
+    def get(self):
+        rows = ShopBundle.query.filter_by(is_active=True).all()
+        return {'bundles': [_bundle_dict(b) for b in rows]}, 200
+
+
+@shop_ns.route('/products/<slug>/bundles')
+class ProductBundles(Resource):
+    """باندل‌هایی که این محصول در آن‌هاست (برای «خرید با هم»)"""
+    def get(self, slug):
+        p = ShopProduct.query.filter_by(slug=slug, is_active=True).first()
+        if not p: return {'message': 'محصول یافت نشد'}, 404
+        rows = [b for b in ShopBundle.query.filter_by(is_active=True).all()
+                if p.id in b.id_list()]
+        return {'bundles': [_bundle_dict(b) for b in rows]}, 200
 
 
 @shop_ns.route('/articles')
@@ -187,6 +310,24 @@ class Checkout(Resource):
             if p: rows.append((p, min(qty, 10)))
         if not rows: return {'message': 'محصولات معتبر نیستند'}, 400
         subtotal = sum(_final_price(p) * qty for p, qty in rows)
+        # ---- تخفیف باندل: اگر همه اقلام یک باندل در سبد باشد، تخفیف اضافه اعمال می‌شود
+        bundle_discount = 0
+        bundles_applied = []
+        cart_ids = {p.id for p, _ in rows}
+        for b in ShopBundle.query.filter_by(is_active=True).all():
+            ids = b.id_list()
+            if not ids or not set(ids).issubset(cart_ids):
+                continue
+            bsub = 0
+            for pid in ids:
+                bp = ShopProduct.query.get(pid)
+                if bp and bp.is_active:
+                    bsub += _final_price(bp)
+            d = int(bsub * (b.discount_percent or 0) / 100)
+            if d > 0:
+                bundle_discount += d
+                bundles_applied.append({'title': b.title, 'discount_percent': b.discount_percent, 'discount': d})
+        subtotal_after_bundle = subtotal - bundle_discount
         coupon_code = ''
         coupon_pct = 0
         code = (d.get('coupon_code') or '').strip().upper()
@@ -195,7 +336,7 @@ class Checkout(Resource):
             now = datetime.utcnow()
             if c and c.active and (not c.expires_at or c.expires_at > now) and c.used_count < c.max_uses:
                 coupon_pct = c.percent; coupon_code = c.code
-        total = int(subtotal * (100 - coupon_pct) / 100)
+        total = int(subtotal_after_bundle * (100 - coupon_pct) / 100)
         uid = _uid()
         balance = sum(t.amount for t in BizWalletTx.query.filter_by(user_id=uid, status='done').all())
         if balance < total:
@@ -216,6 +357,7 @@ class Checkout(Resource):
         db.session.commit()
         return {'message': 'خرید با موفقیت انجام شد', 'order': {
             'ref_code': ref, 'total': total, 'subtotal': subtotal,
+            'bundle_discount': bundle_discount, 'bundles': bundles_applied,
             'coupon_discount': coupon_pct, 'status': o.status,
             'items': [{'title': i.title, 'unit_price': i.unit_price, 'qty': i.qty,
                        'file_url': ShopProduct.query.get(i.product_id).file_url if ShopProduct.query.get(i.product_id) else ''}
@@ -351,6 +493,79 @@ class AdminArticleOne(Resource):
         a.is_published = False
         db.session.commit()
         return {'message': 'مقاله پیش‌نویس شد'}, 200
+
+
+@shop_ns.route('/admin/reviews')
+class AdminReviews(Resource):
+    @jwt_required()
+    def get(self):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        rows = ShopReview.query.order_by(ShopReview.created_at.desc()).limit(200).all()
+        return {'reviews': [dict(r.to_dict(), product=(ShopProduct.query.get(r.product_id).name
+                if ShopProduct.query.get(r.product_id) else '?')) for r in rows]}, 200
+
+
+@shop_ns.route('/admin/reviews/<int:rid>')
+class AdminReviewOne(Resource):
+    @jwt_required()
+    def delete(self, rid):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        r = db.session.get(ShopReview, rid)
+        if not r: return {'message': 'یافت نشد'}, 404
+        db.session.delete(r); db.session.commit()
+        return {'message': 'نظر حذف شد'}, 200
+
+
+@shop_ns.route('/admin/bundles')
+class AdminBundles(Resource):
+    @jwt_required()
+    def get(self):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        rows = ShopBundle.query.order_by(ShopBundle.created_at.desc()).limit(100).all()
+        return {'bundles': [_bundle_dict(b) for b in rows]}, 200
+
+    @jwt_required()
+    def post(self):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        d = request.get_json(silent=True) or {}
+        title = (d.get('title') or '').strip()
+        ids = [int(i) for i in (d.get('product_ids') or []) if str(i).isdigit()]
+        if len(title) < 3 or len(ids) < 2:
+            return {'message': 'عنوان و حداقل ۲ محصول الزامی است'}, 400
+        b = ShopBundle(title=title[:200], slug=_uniq_slug(ShopBundle, title),
+                       description=(d.get('description') or '')[:400],
+                       discount_percent=max(0, min(90, int(d.get('discount_percent', 0)))),
+                       product_ids=json.dumps(ids), is_active=bool(d.get('is_active', True)))
+        db.session.add(b); db.session.commit()
+        return {'message': 'باندل ساخته شد', 'bundle': _bundle_dict(b)}, 201
+
+
+@shop_ns.route('/admin/bundles/<int:bid>')
+class AdminBundleOne(Resource):
+    @jwt_required()
+    def put(self, bid):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        b = db.session.get(ShopBundle, bid)
+        if not b: return {'message': 'یافت نشد'}, 404
+        d = request.get_json(silent=True) or {}
+        if 'title' in d and (d['title'] or '').strip(): b.title = d['title'].strip()[:200]
+        if 'description' in d: b.description = (d['description'] or '')[:400]
+        if 'discount_percent' in d: b.discount_percent = max(0, min(90, int(d['discount_percent'])))
+        if 'product_ids' in d:
+            ids = [int(i) for i in (d.get('product_ids') or []) if str(i).isdigit()]
+            b.product_ids = json.dumps(ids)
+        if 'is_active' in d: b.is_active = bool(d['is_active'])
+        db.session.commit()
+        return {'message': 'به‌روزرسانی شد', 'bundle': _bundle_dict(b)}, 200
+
+    @jwt_required()
+    def delete(self, bid):
+        if not _is_admin(_uid()): return {'message': 'dastresi mojaz nist'}, 403
+        b = db.session.get(ShopBundle, bid)
+        if not b: return {'message': 'یافت نشد'}, 404
+        b.is_active = False
+        db.session.commit()
+        return {'message': 'باندل غیرفعال شد (حذف نرم)'}, 200
 
 
 @shop_ns.route('/admin/orders')

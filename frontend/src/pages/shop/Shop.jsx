@@ -2,16 +2,18 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import Stars from "../../components/common/Stars";
+import WishlistButton from "../../components/common/WishlistButton";
 import {
   ShoppingBag, Sparkles, Bot, Puzzle, Code2, Package, Star, TrendingUp,
-  Eye, Timer, ShieldCheck, X
+  Eye, Timer, X
 } from "lucide-react";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 const SORTS = [
   { v: "newest", t: "جدیدترین" }, { v: "cheap", t: "ارزان‌ترین" },
   { v: "expensive", t: "گران‌ترین" }, { v: "discount", t: "بیشترین تخفیف" },
-  { v: "popular", t: "پرفروش‌ترین" },
+  { v: "popular", t: "پرفروش‌ترین" }, { v: "rating", t: "بهترین امتیاز" },
 ];
 
 const catIcon = (name) => {
@@ -105,7 +107,7 @@ export default function Shop() {
       if (q) p.set("q", q); if (cat) p.set("category", cat); p.set("sort", sort);
       const r = await client.get("/shop/products?" + p.toString());
       setProducts(r.data.products || []);
-    } catch {}
+    } catch (e) { console.error("SHOP_LOAD_ERR", e && e.message, e && e.response && e.response.status); }
     setLoading(false);
   };
   useEffect(() => { load(); }, [cat, sort]);
@@ -166,6 +168,7 @@ export default function Shop() {
                 {catIcon(p.category)}
                 {p.featured && <span className="feat-badge"><Star size={11} /> ویژه</span>}
               </div>
+              <WishlistButton p={p} className="shop-card-wish" />
               {p.flash_active && <span className="flash-badge"><Sparkles size={11} /> فروش فوق‌العاده</span>}
               {p.discount_percent > 0 && <span className="disc-badge">{p.discount_percent}٪ تخفیف</span>}
 
@@ -175,9 +178,9 @@ export default function Shop() {
               </Link>
 
               <div className="shop-meta">
+                <Stars rating={p.rating} count={p.rating_count} />
                 <span className="chip"><TrendingUp size={11} /> {fmt(p.sales_count)} فروش</span>
                 {p.category && <span className="chip">{p.category}</span>}
-                <span className="chip"><ShieldCheck size={11} /> پشتیبانی ۶ ماهه</span>
               </div>
 
               <div className="shop-card-foot">

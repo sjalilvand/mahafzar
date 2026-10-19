@@ -18,16 +18,34 @@ export default function Cart() {
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(null);
+  const [bundles, setBundles] = useState([]);
 
   useEffect(() => {
     client.get("/business/wallet")
       .then(r => setBalance(r.data.balance))
       .catch(e => { if (e.response && [401,422].includes(e.response.status)) setNeedLogin(true); });
+    client.get("/shop/bundles")
+      .then(r => setBundles(r.data.bundles || []))
+      .catch(() => {});
   }, []);
 
   const subtotal = cartApi.total();
+  // ---- محاسبه تخفیف باندل: اگر همه اقلام یک باندل در سبد باشد ----
+  const cartIds = new Set(items.map(i => i.id));
+  const prices = new Map(items.map(i => [i.id, i.price]));
+  const bundleApplies = [];
+  let bundleDiscount = 0;
+  bundles.forEach(b => {
+    const bItems = (b.items || []).filter(it => cartIds.has(it.id));
+    if (bItems.length && (b.items || []).every(it => cartIds.has(it.id))) {
+      const bSum = bItems.reduce((s, it) => s + (prices.get(it.id) || 0), 0);
+      const d = Math.round(bSum * (b.discount_percent || 0) / 100);
+      if (d > 0) { bundleApplies.push({ title: b.title, percent: b.discount_percent, amount: d }); bundleDiscount += d; }
+    }
+  });
+  const afterBundle = subtotal - bundleDiscount;
   const pct = couponInfo && couponInfo.valid ? couponInfo.percent : 0;
-  const total = Math.round(subtotal * (100 - pct) / 100);
+  const total = Math.round(afterBundle * (100 - pct) / 100);
 
   const checkCoupon = async () => {
     if (!coupon.trim()) return;
@@ -128,7 +146,10 @@ export default function Cart() {
           <div className="biz-card co-summary">
             <b>خلاصه سفارش</b>
             <div className="co-row"><span>جمع اقلام ({items.length} قلم)</span><b>{fmt(subtotal)} تومان</b></div>
-            {pct > 0 && <div className="co-row green"><span>تخفیف کد ({pct}٪)</span><b>−{fmt(subtotal - total)} تومان</b></div>}
+            {bundleApplies.map((b, i) => (
+              <div key={i} className="co-row green"><span>تخفیف باندل «{b.title}» ({b.percent}٪)</span><b>−{fmt(b.amount)} تومان</b></div>
+            ))}
+            {pct > 0 && <div className="co-row green"><span>تخفیف کد ({pct}٪)</span><b>−{fmt(afterBundle - total)} تومان</b></div>}
             <div className="co-row total"><span>قابل پرداخت</span><b>{fmt(total)} تومان</b></div>
           </div>
           <div className="biz-card">
@@ -147,7 +168,10 @@ export default function Cart() {
           <div className="biz-card co-summary">
             <b>تایید نهایی و پرداخت</b>
             {items.map(i => <div key={i.id} className="co-row"><span>{i.name} × {i.qty}</span><b>{fmt(i.price * i.qty)}</b></div>)}
-            {pct > 0 && <div className="co-row green"><span>کد تخفیف {coupon} ({pct}٪)</span><b>−{fmt(subtotal - total)}</b></div>}
+            {bundleApplies.map((b, i) => (
+              <div key={"bd" + i} className="co-row green"><span>تخفیف باندل «{b.title}» ({b.percent}٪)</span><b>−{fmt(b.amount)}</b></div>
+            ))}
+            {pct > 0 && <div className="co-row green"><span>کد تخفیف {coupon} ({pct}٪)</span><b>−{fmt(afterBundle - total)}</b></div>}
             <div className="co-row total"><span>مبلغ نهایی</span><b>{fmt(total)} تومان</b></div>
             <p className="biz-sub" style={{ marginTop: 8 }}>مبلغ از کیف پول شما کسر می‌شود. پس از پرداخت، لینک دانلود فورا فعال می‌شود.</p>
           </div>

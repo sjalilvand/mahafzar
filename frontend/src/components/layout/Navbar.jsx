@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Globe, Menu, X, Wallet, LifeBuoy, LayoutDashboard,
   Trophy, BarChart3, Shield, Briefcase, User, LogOut, ChevronDown, Palette, Store,
-  Search, Package, Bot, Puzzle, Code2, Sparkles, TrendingUp, Percent, ShoppingBag
+  Search, Package, Bot, Puzzle, Code2, Sparkles, TrendingUp, Percent, ShoppingBag, Heart
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,7 @@ import ThemeSwitcher from '../common/ThemeSwitcher';
 import NotificationSystem from '../common/NotificationSystem';
 import './Navbar.css';
 import CartIcon from '../common/CartIcon';
+import WishlistIcon from '../common/WishlistIcon';
 import client from '../../api/client';
 
 const Navbar = () => {
@@ -162,6 +163,7 @@ const Navbar = () => {
 
         <div className="nav-actions">
           <CartIcon />
+          <WishlistIcon />
           <Link to="/wallet" className="icon-btn" title="کیف پول"><Wallet size={18} /></Link>
           <Link to="/support" className="icon-btn" title="پشتیبانی"><LifeBuoy size={18} /></Link>
           <div className="ts-h"><ThemeSwitcher /></div>
@@ -226,6 +228,7 @@ const Navbar = () => {
               <NavLink key={l.to} to={l.to} className={cls} onClick={() => setMobileOpen(false)}>{l.label}</NavLink>
             ))}
             <div className="mm-sep" />
+            <Link to="/wishlist" className="mm-item" onClick={() => setMobileOpen(false)}><Heart size={16} /><span>علاقه‌مندی‌ها</span></Link>
             <Link to="/wallet" className="mm-item" onClick={() => setMobileOpen(false)}><Wallet size={16} /><span>کیف پول</span></Link>
             <Link to="/support" className="mm-item" onClick={() => setMobileOpen(false)}><LifeBuoy size={16} /><span>پشتیبانی</span></Link>
             {user && userMenuItems.map(it => (

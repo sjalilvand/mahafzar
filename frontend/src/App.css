@@ -1731,6 +1731,132 @@ html {
 }
 /* ==== END ZHAKET-INSPIRED MARKETPLACE LAYER ==== */
 
+/* ================================================================
+   ==== STARS / WISHLIST / REVIEWS / BUNDLES LAYER (v2) ====
+   ================================================================ */
+
+/* ---------- star rating display ---------- */
+.mh-stars{display:inline-flex;align-items:center;gap:2px;direction:ltr}
+.mh-star.full{fill:#fbbf24;color:#fbbf24}
+.mh-star.empty{fill:none;color:#64748b;opacity:.55}
+.mh-star-half{position:relative;display:inline-flex}
+.mh-star-half .half{position:absolute;inset:0;fill:#fbbf24;color:#fbbf24;clip-path:inset(0 50% 0 0)}
+.mh-stars-count{color:#94a3b8;font-size:11px;margin-inline-start:5px;direction:rtl}
+.theme-light .mh-star.empty{color:#94a3b8}
+.theme-light .mh-stars-count{color:#64748b}
+
+/* ---------- wishlist heart button ---------- */
+.mh-wish-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
+  border-radius:50%;border:1px solid rgba(148,163,184,.3);background:rgba(2,6,23,.55);
+  color:#94a3b8;cursor:pointer;transition:all .2s ease;flex-shrink:0}
+.mh-wish-btn:hover{color:#fb7185;border-color:rgba(251,113,133,.55);transform:scale(1.08)}
+.mh-wish-btn.active{color:#fb7185;border-color:rgba(251,113,133,.6);background:rgba(251,113,133,.14)}
+.mh-wish-btn.active svg{fill:#fb7185}
+.shop-card-wish{position:absolute;top:10px;inset-inline-start:10px;z-index:3}
+.shop-card{position:relative}
+.mh-pcard-wish{position:absolute;top:12px;inset-inline-start:12px;z-index:3}
+.mh-pcard{position:relative}
+.mh-pd-wish{width:34px;height:34px;vertical-align:middle}
+.theme-light .mh-wish-btn{background:rgba(255,255,255,.85);color:#64748b}
+.theme-light .mh-wish-btn.active{color:#e11d48;border-color:rgba(225,29,72,.5);background:rgba(225,29,72,.08)}
+.nav-actions .wish-ic .wish-badge{background:#fb7185}
+
+/* ---------- product detail topline ---------- */
+.mh-pd-topline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#94a3b8;font-size:13px;margin:-4px 0 14px}
+.mh-pd-topline .mh-pd-wish{margin-inline-start:auto}
+.mh-pd-sep{opacity:.6}
+
+/* ---------- reviews section ---------- */
+.mh-reviews{margin-top:22px}
+.mh-rv-title{display:flex;align-items:center;gap:8px;color:#f1f5f9;font-size:15.5px;margin-bottom:14px}
+.mh-rv-title svg{color:#22d3ee}
+.mh-rv-summary{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;
+  padding:16px;border:1px solid rgba(148,163,184,.16);border-radius:16px;background:rgba(255,255,255,.03)}
+.mh-rv-avg{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.mh-rv-avg b{font-size:38px;color:#22d3ee;line-height:1}
+.mh-rv-avg small{color:#94a3b8;font-size:11.5px}
+.mh-rv-dist{display:flex;flex-direction:column;gap:6px}
+.mh-rv-dist-row{display:grid;grid-template-columns:38px 1fr 26px;align-items:center;gap:10px;font-size:12px;color:#cbd5e1}
+.mh-rv-bar{height:7px;border-radius:99px;background:rgba(148,163,184,.18);overflow:hidden}
+.mh-rv-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.mh-rv-dist-row small{color:#94a3b8;text-align:left}
+.mh-rv-form{margin-top:18px;padding-top:16px;border-top:1px dashed rgba(148,163,184,.22)}
+.mh-rv-form > b{display:block;color:#e2e8f0;font-size:13.5px;margin-bottom:10px}
+.mh-rv-stars{display:flex;gap:4px;direction:ltr;margin-bottom:10px}
+.mh-star-btn{background:none;border:none;cursor:pointer;padding:2px;line-height:1}
+.mh-star-ic{font-size:26px;color:#475569;transition:transform .15s ease,color .15s ease;display:inline-block}
+.mh-star-btn:hover .mh-star-ic{transform:scale(1.25)}
+.mh-star-ic.on{color:#fbbf24;text-shadow:0 0 14px rgba(251,191,36,.5)}
+.mh-rv-text{width:100%;min-height:76px;resize:vertical;margin:0 0 10px}
+.mh-rv-list{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+.mh-rv-item{border:1px solid rgba(148,163,184,.14);border-radius:14px;padding:13px 15px;background:rgba(255,255,255,.025)}
+.mh-rv-head{display:flex;align-items:center;gap:10px}
+.mh-rv-head b{color:#f1f5f9;font-size:13px}
+.mh-rv-head small{margin-inline-start:auto;color:#64748b;font-size:11px}
+.mh-rv-avatar{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(34,211,238,.2),rgba(99,102,241,.2));color:#22d3ee;font-weight:800;font-size:14px}
+.mh-rv-item p{margin:9px 0 0;color:#cbd5e1;font-size:13px;line-height:1.8}
+.theme-light .mh-reviews .mh-rv-title{color:#0f172a}
+.theme-light .mh-rv-summary{background:rgba(15,23,42,.03);border-color:rgba(15,23,42,.08)}
+.theme-light .mh-rv-avg b{color:#0891b2}
+.theme-light .mh-rv-dist-row{color:#334155}
+.theme-light .mh-rv-form > b{color:#0f172a}
+.theme-light .mh-rv-item{background:rgba(15,23,42,.02);border-color:rgba(15,23,42,.08)}
+.theme-light .mh-rv-item p{color:#475569}
+.theme-light .mh-rv-head b{color:#0f172a}
+.theme-light .mh-rv-avatar{color:#0891b2}
+.theme-light .mh-star-ic{color:#cbd5e1}
+.theme-light .mh-star-ic.on{color:#f59e0b}
+
+/* ---------- discount bundle (buy together) ---------- */
+.mh-bundle{margin-top:20px;border:1px solid rgba(251,191,36,.28)}
+.mh-bd-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#fbbf24;font-size:15px;margin-bottom:6px}
+.mh-bd-title svg{flex-shrink:0}
+.mh-bd-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800;
+  background:rgba(251,191,36,.14);color:#fbbf24;border:1px solid rgba(251,191,36,.35)}
+.mh-bd-desc{color:#94a3b8;font-size:12.5px;margin:0 0 12px;line-height:1.8}
+.mh-bd-items{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.mh-bd-plus{display:inline-flex;align-items:center;justify-content:center;color:#fbbf24;font-weight:800;font-size:18px;align-self:center}
+.mh-bd-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:128px;max-width:190px;
+  border:1px solid rgba(148,163,184,.18);border-radius:14px;padding:12px 10px;cursor:pointer;
+  background:rgba(255,255,255,.03);transition:all .2s ease;position:relative;text-align:center}
+.mh-bd-item input{position:absolute;opacity:0;pointer-events:none}
+.mh-bd-item:hover{border-color:rgba(34,211,238,.4)}
+.mh-bd-item.on{border-color:#22d3ee;background:rgba(34,211,238,.07)}
+.mh-bd-item.on::after{content:"✓";position:absolute;top:6px;inset-inline-end:8px;width:17px;height:17px;border-radius:50%;
+  background:#22d3ee;color:#04121f;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.mh-bd-item .shop-thumb{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0}
+.mh-bd-name{color:#e2e8f0;font-size:11.5px;font-weight:700;line-height:1.5}
+.mh-bd-price{color:#22d3ee;font-size:12px}
+.mh-bd-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px}
+.mh-bd-prices{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.mh-bd-prices del{color:#64748b;font-size:13px}
+.mh-bd-final{font-size:22px;color:#22d3ee}
+.mh-bd-final small{font-size:12px}
+.mh-bd-save{display:inline-block;padding:4px 11px;border-radius:99px;background:rgba(16,185,129,.12);
+  color:#10b981;font-size:11.5px;font-weight:800;border:1px solid rgba(16,185,129,.3)}
+.mh-bd-hint{margin:10px 0 0;color:#fbbf24;font-size:11.5px}
+.theme-light .mh-bundle{border-color:rgba(217,119,6,.3)}
+.theme-light .mh-bd-title{color:#b45309}
+.theme-light .mh-bd-badge{background:rgba(217,119,6,.1);color:#b45309;border-color:rgba(217,119,6,.3)}
+.theme-light .mh-bd-desc{color:#64748b}
+.theme-light .mh-bd-item{background:rgba(15,23,42,.02);border-color:rgba(15,23,42,.1)}
+.theme-light .mh-bd-item.on{border-color:#0891b2;background:rgba(8,145,178,.06)}
+.theme-light .mh-bd-item.on::after{background:#0891b2;color:#fff}
+.theme-light .mh-bd-name{color:#0f172a}
+.theme-light .mh-bd-price,.theme-light .mh-bd-final{color:#0891b2}
+.theme-light .mh-bd-plus{color:#b45309}
+
+@media (max-width:700px){
+  .mh-rv-summary{grid-template-columns:1fr;gap:14px}
+  .mh-bd-item{min-width:100%;max-width:none;flex-direction:row;text-align:start}
+  .mh-bd-item .shop-thumb{width:40px;height:40px;flex-shrink:0}
+  .mh-bd-name{flex:1}
+  .mh-bd-foot{flex-direction:column;align-items:stretch}
+  .mh-bd-foot .shop-add{justify-content:center}
+}
+
+
 /* ---------- product detail trust row ---------- */
 .mh-pd-trust{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;padding-top:16px;
   border-top:1px dashed rgba(148,163,184,.25)}

@@ -5,11 +5,13 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import client from '../api/client';
 import { cartApi } from '../cartStore';
+import { wishlistApi } from '../wishlistStore';
+import Stars from '../components/common/Stars';
 import {
   Brain, Shield, Database, Activity, Server, Cpu,
   Phone, Mail, MapPin, CheckCircle, Zap, ArrowRight,
   MessageCircle, ShieldCheck, Headset, RefreshCw, Wallet,
-  Eye, ShoppingBag, Newspaper, ArrowLeft, Sparkles, TrendingUp
+  Eye, ShoppingBag, Newspaper, ArrowLeft, Sparkles, TrendingUp, Heart
 } from 'lucide-react';
 
 const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
@@ -136,9 +138,16 @@ const MarketCard = ({ p }) => (
         {p.flash_active && <span className="mh-pcard-flash">فوق‌العاده</span>}
       </div>
     </Link>
+    <button type="button"
+            className={"mh-wish-btn mh-pcard-wish"}
+            title="علاقه‌مندی"
+            onClick={(e) => { e.preventDefault(); wishlistApi.toggle(p); }}>
+      <Heart size={15} />
+    </button>
     <div className="mh-pcard-body">
       <Link to={'/product/' + p.slug}><h3>{p.name}</h3></Link>
       <p>{p.short_desc}</p>
+      <Stars rating={p.rating} count={p.rating_count} />
       <div className="mh-pcard-meta">
         <span><TrendingUp size={12} /> {fmt(p.sales_count)} فروش</span>
         {p.category && <span>{p.category}</span>}
