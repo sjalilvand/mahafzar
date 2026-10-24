@@ -247,3 +247,58 @@
     border-radius: 0;
   }
 }
+/* ===== round-11: پیام‌های ساختاریافته — کارت محصول/دوره/مقاله + اکشن‌ها ===== */
+.chat-online-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#34d399;
+  margin-inline-end:4px;box-shadow:0 0 6px rgba(52,211,153,.8);animation: cwPulse 2s infinite}
+@keyframes cwPulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.cw-text{white-space:pre-line;line-height:1.9}
+
+/* --- کارت‌ها --- */
+.cw-cards{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.cw-card{display:flex;gap:10px;background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.22);
+  border-radius:14px;padding:10px;max-width:100%}
+.theme-light .cw-card{background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.25)}
+.cw-card-thumb{position:relative;width:64px;height:64px;border-radius:10px;overflow:hidden;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(99,102,241,.25));
+  display:flex;align-items:center;justify-content:center;color:var(--primary,#8b5cf6)}
+.cw-card-thumb img{width:100%;height:100%;object-fit:cover}
+.cw-off{position:absolute;top:4px;inset-inline-start:4px;display:inline-flex;align-items:center;gap:2px;
+  background:#ef4444;color:#fff;font-size:10px;font-weight:800;border-radius:999px;padding:2px 6px}
+.cw-card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.cw-card-title{font-size:13px;font-weight:800;color:var(--text,#e2e8f0);line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.theme-light .cw-card-title{color:#1e293b}
+.cw-card-sub{font-size:11.5px;color:var(--textMuted,#94a3b8);line-height:1.7;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cw-card-meta{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--primary,#a78bfa);font-weight:700}
+.cw-dot{opacity:.6}
+.cw-price-row{display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap}
+.cw-price-row del{color:#94a3b8;font-size:11.5px;opacity:.8}
+.cw-price-row b{color:#34d399;font-weight:800}
+.theme-light .cw-price-row b{color:#059669}
+
+/* --- دکمه کارت --- */
+.cw-card-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.cw-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(139,92,246,.4);
+  background:transparent;color:var(--primary,#8b5cf6);font-size:11.5px;font-weight:700;
+  border-radius:999px;padding:6px 12px;cursor:pointer;transition:.2s;font-family:inherit}
+.cw-btn:hover{background:rgba(139,92,246,.12)}
+.cw-btn-solid{background:linear-gradient(135deg,var(--secondary,#6366f1),var(--primary,#8b5cf6));
+  border:none;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.35)}
+.cw-btn-solid:hover{filter:brightness(1.1);background:linear-gradient(135deg,var(--secondary,#6366f1),var(--primary,#8b5cf6))}
+
+/* --- اکشن‌های پیام --- */
+.cw-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cw-action-chip{border:1px dashed rgba(139,92,246,.5);background:rgba(139,92,246,.08);
+  color:var(--primary,#a78bfa);font-size:11.5px;font-weight:700;border-radius:999px;
+  padding:6px 12px;cursor:pointer;transition:.2s;font-family:inherit}
+.cw-action-chip:hover{background:rgba(139,92,246,.18)}
+
+/* --- پیشنهادهای سریع --- */
+.cw-quick{display:flex;gap:6px;flex-wrap:wrap;padding:4px 12px 8px 60px}
+.cw-quick-chip{border:1px solid rgba(139,92,246,.35);background:rgba(139,92,246,.1);
+  color:var(--text,#e2e8f0);font-size:11.5px;font-weight:700;border-radius:999px;
+  padding:7px 13px;cursor:pointer;transition:.2s;font-family:inherit}
+.cw-quick-chip:hover{background:rgba(139,92,246,.22);transform:translateY(-1px)}
+.theme-light .cw-quick-chip{color:#334155}

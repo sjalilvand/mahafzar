@@ -1212,7 +1212,7 @@ html {
   cursor: pointer;
 }
 /* ============ MAHAI MODERN LAYER ============ */
-.app-container, body { font-family: 'Vazirmatn', ui-sans-serif, system-ui, 'Segoe UI', Tahoma, sans-serif !important; }
+.app-container, body { font-family: var(--font-family, 'Estedad'), 'Estedad', 'Vazirmatn', ui-sans-serif, system-ui, 'Segoe UI', Tahoma, sans-serif !important; }
 .theme-dark .text-gray-300 { color: #cbd5e1; }
 .theme-dark .text-gray-400 { color: #aeb9c9; }
 .app-container header, .app-container nav.navbar, .app-container .navbar {

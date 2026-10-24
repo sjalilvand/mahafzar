@@ -18,8 +18,8 @@ const defaultSettings = {
     info: '#3b82f6',
   },
   font: {
-    family: "'Vazir', sans-serif",
-    name: 'Vazir',        // ← اضافه شد
+    family: "'Estedad', sans-serif",   // round-11: فونت پیش‌فرض جدید
+    name: 'Estedad',
     size: 'medium',
     lineHeight: 1.8,
     letterSpacing: 0,
@@ -37,18 +37,26 @@ const defaultSettings = {
   numberFormat: 'fa-IR',
 };
 
+// round-11: فقط فونت‌هایی که واقعاً در برنامه لود شده‌اند (index.html / index.css)
 const availableFonts = [
-  { name: 'Vazir', family: "'Vazir', sans-serif", label: 'وزیر' },
-  { name: 'Vazirmatn', family: "'Vazirmatn', sans-serif", label: 'وزیرمتن' },
-  { name: 'Sahel', family: "'Sahel', sans-serif", label: 'ساحل' },
-  { name: 'Samim', family: "'Samim', sans-serif", label: 'صمیم' },
-  { name: 'Shabnam', family: "'Shabnam', sans-serif", label: 'شبنم' },
-  { name: 'Lalezar', family: "'Lalezar', cursive", label: 'لاله‌زار' },
-  { name: 'IranSans', family: "'IRANSans', sans-serif", label: 'ایران‌سنس' },
-  { name: 'Yekan', family: "'Yekan', sans-serif", label: 'یکان' },
-  { name: 'Roboto', family: "'Roboto', sans-serif", label: 'Roboto' },
-  { name: 'Poppins', family: "'Poppins', sans-serif", label: 'Poppins' },
+  { name: 'Estedad',     family: "'Estedad', sans-serif",      label: 'استعداد',     desc: 'مدرن و خوانا — پیش‌فرض' },
+  { name: 'Vazirmatn',   family: "'Vazirmatn', sans-serif",    label: 'وزیرمتن',     desc: 'استاندارد و رسمی' },
+  { name: 'Shabnam',     family: "'Shabnam', sans-serif",      label: 'شبنم',        desc: 'لطیف و مدرن' },
+  { name: 'Sahel',       family: "'Sahel', sans-serif",        label: 'ساحل',        desc: 'سبک و ساده' },
+  { name: 'Samim',       family: "'Samim', sans-serif",        label: 'صمیم',        desc: 'گرم و دوستانه' },
+  { name: 'Lalezar',     family: "'Lalezar', cursive",         label: 'لاله‌زار',    desc: 'نمایشی و پررنگ' },
+  { name: 'Markazi Text', family: "'Markazi Text', serif",     label: 'مرکزی',       desc: 'کلاسیک و مطالعاتی' },
 ];
+
+// فونت‌های قدیمی که هیچ‌وقت واقعاً لود نمی‌شدند در migrateFont به فونت جدید نگاشت می‌شوند
+const migrateFont = (font) => {
+  if (!font || !font.family) return { ...defaultSettings.font };
+  const known = availableFonts.some(f => f.family === font.family);
+  if (known) return font;
+  const legacyName = availableFonts.find(f => f.name === font.name);
+  if (legacyName) return { ...font, family: legacyName.family, name: legacyName.name };
+  return { ...font, family: defaultSettings.font.family, name: defaultSettings.font.name };
+};
 
 const predefinedThemes = {
   dark: {
@@ -151,8 +159,16 @@ const predefinedThemes = {
 
 export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem('app_settings');
-    return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings;
+    try {
+      const saved = localStorage.getItem('app_settings');
+      if (!saved) return defaultSettings;
+      const parsed = { ...defaultSettings, ...JSON.parse(saved) };
+      // round-11: مهاجرت فونت‌های قدیمی/ناشناخته به فونت جدید
+      parsed.font = migrateFont(parsed.font);
+      return parsed;
+    } catch (e) {
+      return defaultSettings;
+    }
   });
 
   useEffect(() => {
@@ -167,8 +183,9 @@ export const SettingsProvider = ({ children }) => {
       root.style.setProperty(`--color-${key}`, value);
     });
 
-    // Apply typography
+    // Apply typography (هم‌گام با سیستم appearance قدیمی تا دو سیستم نجنگند)
     root.style.setProperty('--font-family', s.font.family);
+    root.style.setProperty('--ap-font', s.font.family);
     root.style.setProperty('--font-size', getFontSize(s.font.size));
     root.style.setProperty('--line-height', s.font.lineHeight);
     root.style.setProperty('--letter-spacing', `${s.font.letterSpacing}px`);

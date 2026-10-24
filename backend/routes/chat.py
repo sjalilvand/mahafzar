@@ -3,6 +3,7 @@ from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.chat_service import ChatService
 from models import db, ChatLog
+import json
 
 chat_ns = Namespace('chat', description='Chat operations')
 chat_service = ChatService()
@@ -18,26 +19,40 @@ class Chat(Resource):
     @chat_ns.expect(chat_model)
     def post(self):
         data = request.get_json()
-        user_message = data['message']
+        user_message = (data.get('message') or '').strip()
+        if not user_message:
+            return {'response': 'پیام خالی است!', 'items': [], 'actions': [], 'sources': []}, 400
+
         user_id = get_jwt_identity()
 
-        # Get response from chat service
-        response, context = chat_service.get_response(user_message)
+        # Get response from chat service (dict: text/items/actions یا str قدیمی)
+        result, context = chat_service.get_response(user_message)
+        if isinstance(result, dict):
+            text = result.get('text', '')
+            items = result.get('items', [])
+            actions = result.get('actions', [])
+        else:
+            text, items, actions = result, [], []
 
-        # Log chat
-        if user_id:
+        # Log chat (کاربر مهمان هم لاگ می‌شود — user_id nullable است)
+        try:
             log = ChatLog(
-                user_id=user_id,
+                user_id=user_id if user_id else None,
                 message=user_message,
-                response=response,
-                context_used=str(context)
+                response=text,
+                context_used=json.dumps({'items': [i.get('name') or i.get('title') for i in items][:5],
+                                         'sources': list(context)[:5]}, ensure_ascii=False)
             )
             db.session.add(log)
             db.session.commit()
+        except Exception:
+            db.session.rollback()  # لاگ حیاتی نیست
 
         return {
-            'response': response,
-            'sources': context[:3]  # Return top 3 sources
+            'response': text,
+            'items': items,
+            'actions': actions,
+            'sources': list(context)[:3]
         }
 
 

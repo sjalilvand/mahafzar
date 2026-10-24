@@ -170,5 +170,13 @@
 .ts-item-name{flex:1;text-align:start}
 .ts-item-check{margin-inline-start:auto;color:var(--primary,#8b5cf6)}
 
+/* --- round-11: font section inside theme menu --- */
+.ts-divider{height:1px;background:rgba(148,163,184,.18);margin:7px 4px}
+.ts-cap{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#64748b;
+  letter-spacing:.02em;padding:4px 10px 6px}
+.theme-light .ts-cap{color:#94a3b8}
+.ts-font-item{font-size:14.5px;line-height:1.5;padding:7px 10px}
+.ts-menu{max-height:min(560px,calc(100vh - 90px));overflow-y:auto;overscroll-behavior:contain}
+
 /* --- mobile menu section captions --- */
 .mm-cap{font-size:11px;font-weight:800;color:#64748b;letter-spacing:.02em;padding:10px 12px 2px}

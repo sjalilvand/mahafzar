@@ -11,11 +11,36 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ===== round-11: فونت‌های فارسی وب (از CDN با font-display: swap) ===== */
+@font-face {
+  font-family: 'Estedad';
+  src: url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@8.5/fonts/Estedad%5Bwght%5D.woff2') format('woff2-variations'),
+       url('https://cdn.jsdelivr.net/gh/aminabedi68/Estedad@8.5/fonts/Estedad%5Bwght%5D.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lalezar';
+  src: url('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/lalezar/Lalezar-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Markazi Text';
+  src: url('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/markazitext/MarkaziText%5Bwght%5D.ttf') format('truetype-variations'),
+       url('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/markazitext/MarkaziText%5Bwght%5D.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: Tahoma, Arial, sans-serif;
+  font-family: 'Estedad', 'Vazirmatn', Tahoma, Arial, sans-serif;
   background: #f8fafc;
   color: #0f172a;
 }
@@ -40,8 +65,9 @@ select {
 }
 
 /* ============ MAHAI MODERN LAYER (auto-generated) ============ */
+/* round-11: فونت از SettingsContext (متغیر --font-family) می‌آید؛ پیش‌فرض استعداد */
 .app-container, body {
-  font-family: 'Vazirmatn', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif !important;
+  font-family: var(--font-family, 'Estedad'), 'Estedad', 'Vazirmatn', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif !important;
 }
 h1, h2, h3 { letter-spacing: -0.01em; }
 

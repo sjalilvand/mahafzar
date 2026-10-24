@@ -9,7 +9,7 @@ import Stars from "../../components/common/Stars";
 import WishlistButton from "../../components/common/WishlistButton";
 import {
   ShieldCheck, Headset, RefreshCw, Wallet, Package, Heart,
-  ShoppingBag, MessageSquareQuote, Gift, Check, Scale, Ticket, Copy
+  ShoppingBag, MessageSquareQuote, Gift, Check, Scale, Ticket, Copy, MessageCircle
 } from "lucide-react";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
@@ -250,6 +250,9 @@ export default function ProductDetail() {
           <button className="btn-auth solid" onClick={buyNow}>خرید فوری</button>
           <button className={"btn-auth ghost" + (inCmp ? " mh-cmp-on" : "")} onClick={toggleCompare}>
             <Scale size={15} style={{ marginInlineEnd: 5 }} /> {inCmp ? "در مقایسه ✓" : "افزودن به مقایسه"}
+          </button>
+          <button className="btn-auth ghost" onClick={() => window.dispatchEvent(new CustomEvent("mahafzar:chat-ask", { detail: { message: `قیمت ${p.name} چنده؟` } }))}>
+            <MessageCircle size={15} style={{ marginInlineEnd: 5 }} /> پرسش از دستیار
           </button>
           <Link className="btn-auth ghost" to="/shop">بازگشت</Link>
         </div>

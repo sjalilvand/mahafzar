@@ -230,7 +230,16 @@
 
 .font-name {
   font-size: 0.85rem;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+/* round-11: توضیح کوتاه هر فونت */
+.font-desc {
+  font-size: 0.72rem;
   color: var(--color-textMuted);
+  text-align: center;
+  line-height: 1.6;
 }
 
 /* Language Grid */

@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { setAppearance, getAppearance, resetAppearance } from "../appearance";
 
+// round-11: فقط فونت‌های واقعاً لودشده (هم‌راستا با SettingsContext)
 const FONTS = [
-  { v: "'Vazirmatn'", t: "وزیرمتن (پیش‌فرض)" },
-  { v: "Tahoma", t: "Tahoma" },
-  { v: "'Segoe UI'", t: "Segoe UI" },
-  { v: "system-ui", t: "سیستمی" },
+  { v: "'Estedad', sans-serif", t: "استعداد (پیش‌فرض)" },
+  { v: "'Vazirmatn', sans-serif", t: "وزیرمتن" },
+  { v: "'Shabnam', sans-serif", t: "شبنم" },
+  { v: "'Sahel', sans-serif", t: "ساحل" },
+  { v: "'Samim', sans-serif", t: "صمیم" },
+  { v: "'Lalezar', cursive", t: "لاله‌زار" },
+  { v: "'Markazi Text', serif", t: "مرکزی" },
 ];
 const ACCENTS = ["#22d3ee", "#6366f1", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#8b5cf6", "#0ea5e9"];
 

@@ -218,6 +218,7 @@ const Settings = () => {
                         >
                           <span className="font-sample">آ ب پ</span>
                           <span className="font-name">{font.label}</span>
+                          {font.desc && <span className="font-desc">{font.desc}</span>}
                         </button>
                       ))}
                     </div>
