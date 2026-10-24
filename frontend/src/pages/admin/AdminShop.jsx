@@ -7,9 +7,11 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
   LineElement, BarElement, Title, Tooltip, Legend, Filler
 } from "chart.js";
+import { syncChartFont } from "../../chartFontSync";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement,
                  BarElement, Title, Tooltip, Legend, Filler);
+syncChartFont(ChartJS); // round-12: فونت چارت از تم دنبال کند
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 const emptyP = { name: "", short_desc: "", description: "", price: 0, discount_percent: 0,

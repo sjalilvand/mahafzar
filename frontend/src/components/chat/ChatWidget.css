@@ -302,3 +302,51 @@
   padding:7px 13px;cursor:pointer;transition:.2s;font-family:inherit}
 .cw-quick-chip:hover{background:rgba(139,92,246,.22);transform:translateY(-1px)}
 .theme-light .cw-quick-chip{color:#334155}
+
+/* ===== round-12: header actions (گفتگوی جدید) ===== */
+.chat-header-actions{display:flex;align-items:center;gap:6px}
+.chat-clear{background:none;border:none;color:#94a3b8;cursor:pointer;padding:6px;border-radius:8px;
+  display:inline-flex;align-items:center;transition:.2s;font-family:inherit}
+.chat-clear:hover{color:#f87171;background:rgba(248,113,113,.1)}
+
+/* ===== round-12: نظرسنجی گرافیکی داخل چت ===== */
+.cw-survey{margin-top:10px;padding:12px 14px;border-radius:14px;
+  background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.28);
+  animation:cwSurveyIn .35s ease}
+@keyframes cwSurveyIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.cw-survey-q{font-size:12.5px;font-weight:700;color:var(--text,#e2e8f0);margin-bottom:9px}
+.theme-light .cw-survey-q{color:#334155}
+.cw-survey.done{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.3)}
+.cw-survey-thanks{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#10b981}
+
+/* ستاره‌ها */
+.cw-stars{display:flex;gap:4px;justify-content:center;padding:2px 0}
+.cw-star-btn{background:none;border:none;cursor:pointer;padding:3px;border-radius:8px;
+  display:inline-flex;transition:transform .15s;font-family:inherit}
+.cw-star-btn:hover{transform:scale(1.25) rotate(6deg)}
+.cw-star-btn:disabled{cursor:wait}
+
+/* ایموجی‌ها */
+.cw-emoji-row{display:flex;gap:8px;justify-content:space-between}
+.cw-emoji-btn{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(148,163,184,.22);
+  border-radius:12px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;
+  align-items:center;gap:2px;transition:.18s;font-family:inherit}
+.cw-emoji-btn:hover{transform:translateY(-3px) scale(1.06);border-color:rgba(139,92,246,.55);
+  background:rgba(139,92,246,.12)}
+.cw-emoji-btn:disabled{cursor:wait}
+.cw-emoji{font-size:24px;line-height:1}
+.cw-emoji-btn small{font-size:10px;color:var(--text-muted,#94a3b8);font-weight:700}
+.theme-light .cw-emoji-btn{background:rgba(15,23,42,.03)}
+.theme-light .cw-emoji-btn small{color:#64748b}
+
+/* نتیجه گرافیکی — نمودار میله‌ای */
+.cw-bars{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.cw-bar-row{display:flex;align-items:center;gap:8px}
+.cw-bar-label{font-size:10.5px;font-weight:800;color:#fbbf24;min-width:30px}
+.cw-bar-track{flex:1;height:9px;border-radius:999px;background:rgba(148,163,184,.16);overflow:hidden}
+.cw-bar-fill{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#fbbf24,#f59e0b);animation:cwBarGrow .7s cubic-bezier(.2,.8,.3,1)}
+@keyframes cwBarGrow{from{width:0}}
+.cw-bar-pct{font-size:10.5px;font-weight:800;color:var(--text-muted,#94a3b8);min-width:34px;text-align:end}
+.cw-bars-foot{font-size:11px;color:var(--text-muted,#94a3b8);text-align:center;margin-top:4px;font-weight:700}
+.theme-light .cw-bar-pct,.theme-light .cw-bars-foot{color:#64748b}

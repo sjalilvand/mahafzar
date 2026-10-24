@@ -24,6 +24,7 @@ import {
   Star, Eye, Award, Clock, Activity,
   ChevronDown, Download, Calendar, RefreshCw
 } from 'lucide-react';
+import { syncChartFont } from '../chartFontSync';
 import './Analytics.css';
 
 // Register ChartJS components
@@ -40,6 +41,7 @@ ChartJS.register(
   Legend,
   Filler
 );
+syncChartFont(ChartJS); // round-12: فونت چارت از تم دنبال کند
 
 const API_URL = (import.meta.env.VITE_API_URL|| '')+'/api';
 

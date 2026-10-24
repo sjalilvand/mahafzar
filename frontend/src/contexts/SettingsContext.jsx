@@ -38,13 +38,19 @@ const defaultSettings = {
 };
 
 // round-11: فقط فونت‌هایی که واقعاً در برنامه لود شده‌اند (index.html / index.css)
+// round-12: ۵ فونت جدید (گندم، تنها، پرستو، گلزار نستعلیق، نسخ) — مجموع ۱۲ فونت فارسی
 const availableFonts = [
   { name: 'Estedad',     family: "'Estedad', sans-serif",      label: 'استعداد',     desc: 'مدرن و خوانا — پیش‌فرض' },
   { name: 'Vazirmatn',   family: "'Vazirmatn', sans-serif",    label: 'وزیرمتن',     desc: 'استاندارد و رسمی' },
   { name: 'Shabnam',     family: "'Shabnam', sans-serif",      label: 'شبنم',        desc: 'لطیف و مدرن' },
   { name: 'Sahel',       family: "'Sahel', sans-serif",        label: 'ساحل',        desc: 'سبک و ساده' },
   { name: 'Samim',       family: "'Samim', sans-serif",        label: 'صمیم',        desc: 'گرم و دوستانه' },
+  { name: 'Gandom',      family: "'Gandom', sans-serif",       label: 'گندم',        desc: 'خوش‌فرم و مطالعاتی' },
+  { name: 'Tanha',       family: "'Tanha', sans-serif",        label: 'تنها',        desc: 'ظریف و مینیمال' },
+  { name: 'Parastoo',    family: "'Parastoo', sans-serif",     label: 'پرستو',       desc: 'ادبی و شاعرانه' },
   { name: 'Lalezar',     family: "'Lalezar', cursive",         label: 'لاله‌زار',    desc: 'نمایشی و پررنگ' },
+  { name: 'Gulzar',      family: "'Gulzar', serif",            label: 'گلزار نستعلیق', desc: 'نستعلیق و هنری' },
+  { name: 'Noto Naskh Arabic', family: "'Noto Naskh Arabic', serif", label: 'نسخ',    desc: 'نسخ کلاسیک و خوانا' },
   { name: 'Markazi Text', family: "'Markazi Text', serif",     label: 'مرکزی',       desc: 'کلاسیک و مطالعاتی' },
 ];
 
@@ -189,6 +195,11 @@ export const SettingsProvider = ({ children }) => {
     root.style.setProperty('--font-size', getFontSize(s.font.size));
     root.style.setProperty('--line-height', s.font.lineHeight);
     root.style.setProperty('--letter-spacing', `${s.font.letterSpacing}px`);
+    // round-12: فونت نمودارهای Chart.js هم هم‌گام شود (رویداد سراسری + مقدار سراسری)
+    try {
+      window.dispatchEvent(new CustomEvent('mahafzar:font-changed', { detail: { family: s.font.family } }));
+      window.__mahafzarFontFamily = s.font.family;
+    } catch (e) { /* noop */ }
 
     // Apply density
     root.style.setProperty('--spacing-unit', getSpacingUnit(s.density));

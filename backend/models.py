@@ -266,6 +266,20 @@ class ChatLog(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class ChatFeedback(db.Model):
+    """round-12 — نتایج نظرسنجی گرافیکی چت (ستاره/ایموجی) و بازخورد پاسخ‌ها"""
+    __tablename__ = 'chat_feedbacks'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    session_id = db.Column(db.String(80), index=True)
+    survey_id = db.Column(db.String(80), index=True)
+    kind = db.Column(db.String(30))          # answer_rating | survey_step | survey_comment
+    question = db.Column(db.String(300))
+    rating = db.Column(db.Integer)           # ۱ تا ۵ (۰ برای نظر متنی)
+    comment = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 # ==================== GAMIFICATION ====================
 class Badge(db.Model):
     __tablename__ = 'badges'
