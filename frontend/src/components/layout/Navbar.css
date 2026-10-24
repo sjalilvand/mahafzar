@@ -10,11 +10,11 @@
 }
 .theme-light .navbar{background:rgba(255,255,255,.82) !important;border-bottom-color:rgba(15,23,42,.08)}
 
-.nav-content{max-width:1320px;margin:0 auto;height:64px;display:flex;align-items:center;gap:12px;padding:0 18px}
+.nav-content{max-width:1320px;margin:0 auto;height:64px;display:flex;align-items:center;gap:12px;padding:0 18px;flex-wrap:nowrap;min-width:0}
 
 .nav-logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;color:var(--text,#e2e8f0);text-decoration:none;white-space:nowrap;flex-shrink:0}
 
-.nav-center{display:flex;align-items:center;gap:2px;margin:0 auto}
+.nav-center{display:flex;align-items:center;gap:2px;margin:0 auto;flex-wrap:nowrap;white-space:nowrap}
 .nv-link{position:relative;color:var(--text-muted,#94a3b8);text-decoration:none;font-size:13.5px;font-weight:500;padding:8px 11px;border-radius:9px;white-space:nowrap;transition:color .2s,background .2s}
 .nv-link:hover{color:var(--primary,#22d3ee);background:rgba(34,211,238,.07)}
 .nv-link.active{color:var(--primary,#22d3ee)}
@@ -26,8 +26,6 @@
 .icon-btn:hover{color:var(--primary,#22d3ee);background:rgba(34,211,238,.08)}
 
 .ts-h{display:flex;align-items:center;gap:4px}
-.ts-h > div{display:flex !important;flex-direction:row !important;align-items:center;gap:4px}
-.ts-h button{width:30px !important;height:30px !important;padding:0 !important;display:inline-flex !important;align-items:center;justify-content:center;border-radius:8px}
 
 .lang-btn{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 11px;border-radius:999px;border:1px solid rgba(34,211,238,.4);background:transparent;color:var(--primary,#22d3ee);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
 .lang-btn:hover{background:rgba(34,211,238,.1)}
@@ -58,17 +56,19 @@
 
 .mobile-menu{position:absolute;top:100%;inset-inline:0;background:rgba(8,12,24,.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(148,163,184,.12);padding:12px 18px 20px;display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 64px);overflow-y:auto}
 .theme-light .mobile-menu{background:rgba(255,255,255,.98)}
-.mobile-menu .nv-link{padding:12px;font-size:14.5px}
+.mobile-menu .nv-link{display:flex;align-items:center;gap:10px;padding:12px;font-size:14.5px}
 .mm-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border-radius:10px;color:#cbd5e1;text-decoration:none;font-size:14.5px;background:none;border:none;font-family:inherit;cursor:pointer;text-align:start}
 .mm-item:hover{background:rgba(34,211,238,.08);color:#22d3ee}
 .mm-sep{height:1px;background:rgba(148,163,184,.15);margin:8px 0}
 .mm-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
 
-@media (max-width:1100px){
+@media (max-width:1240px){
+  .mh-nav-search{display:none}
+}
+@media (max-width:1080px){
   .nav-center{display:none}
   .hamburger{display:inline-flex}
   .desktop-only{display:none !important}
-  .mh-nav-search{display:none}
 }
 @media (max-width:460px){
   .nav-logo span{display:none}
@@ -125,3 +125,50 @@
 .mh-mega-cta-btn{flex-shrink:0;display:inline-flex;align-items:center;padding:8px 16px;border-radius:999px;
   background:linear-gradient(135deg,#22d3ee,#6366f1);color:#04121d;font-size:12.5px;font-weight:800;text-decoration:none}
 .mh-mega-cta-btn:hover{filter:brightness(1.1)}
+
+/* ============================================================
+   ROUND 10 — grouped dropdown menus + compact theme switcher
+   ============================================================ */
+
+/* --- desktop dropdown groups (آموزش و مقالات / جامعه / خدمات) --- */
+.nv-drop-wrap{position:relative}
+.nv-drop-btn{background:none;border:none;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:3px}
+.nv-drop-btn svg{transition:transform .2s}
+.nv-drop-btn svg.rot{transform:rotate(180deg)}
+.nv-dd{position:absolute;top:calc(100% + 10px);inset-inline-start:-10px;min-width:250px;
+  background:rgba(13,18,32,.98);border:1px solid rgba(148,163,184,.18);border-radius:14px;padding:8px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(20px);z-index:1100}
+.theme-light .nv-dd{background:rgba(255,255,255,.98);box-shadow:0 18px 50px rgba(15,23,42,.15)}
+.nv-dd-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;text-decoration:none;transition:.18s}
+.nv-dd-item:hover{background:rgba(139,92,246,.1);transform:translateX(-2px)}
+.theme-light .nv-dd-item:hover{background:rgba(139,92,246,.08);transform:none}
+.nv-dd-ic{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;
+  background:rgba(139,92,246,.12);color:var(--primary,#8b5cf6);flex-shrink:0}
+.nv-dd-txt{display:flex;flex-direction:column;gap:1px}
+.nv-dd-txt b{font-size:13px;font-weight:700;color:var(--text,#e2e8f0)}
+.nv-dd-txt small{font-size:11px;color:#64748b}
+.theme-light .nv-dd-txt b{color:#0f172a}
+
+/* --- compact theme switcher (one button + menu) --- */
+.ts-compact{position:relative}
+.ts-btn-cur{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;
+  border-radius:10px;border:1px solid rgba(148,163,184,.25);background:rgba(255,255,255,.04);
+  color:var(--primary,#8b5cf6);cursor:pointer;transition:.2s;font-family:inherit;padding:0}
+.ts-btn-cur:hover{border-color:var(--primary,#8b5cf6);background:rgba(139,92,246,.1)}
+.theme-light .ts-btn-cur{background:rgba(15,23,42,.03)}
+.ts-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:184px;
+  background:rgba(13,18,32,.98);border:1px solid rgba(148,163,184,.18);border-radius:14px;padding:8px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(20px);z-index:1100}
+.theme-light .ts-menu{background:rgba(255,255,255,.98);box-shadow:0 18px 50px rgba(15,23,42,.15)}
+.ts-item{display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:9px;
+  background:none;border:none;cursor:pointer;font-family:inherit;font-size:13px;color:var(--text,#cbd5e1);text-align:start}
+.ts-item:hover{background:rgba(139,92,246,.1)}
+.ts-item.active{color:var(--primary,#8b5cf6);font-weight:800}
+.theme-light .ts-item{color:#334155}
+.ts-item-ic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;
+  background:rgba(139,92,246,.12);color:var(--primary,#8b5cf6);flex-shrink:0}
+.ts-item-name{flex:1;text-align:start}
+.ts-item-check{margin-inline-start:auto;color:var(--primary,#8b5cf6)}
+
+/* --- mobile menu section captions --- */
+.mm-cap{font-size:11px;font-weight:800;color:#64748b;letter-spacing:.02em;padding:10px 12px 2px}

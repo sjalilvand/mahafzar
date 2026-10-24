@@ -2379,3 +2379,59 @@ body.theme-sunset .hero-visual .ai-core::before{ box-shadow:0 0 60px rgba(249,11
   .cart-bump, .cart-bump .cart-badge, .co-check, .co-final-pop{ animation:none }
   .co-check-ring, .co-check-mark{ animation:none; stroke-dashoffset:0 }
 }
+
+/* ============================================================
+   ROUND 10 — compare entrance animation + 3D page loader
+   ============================================================ */
+
+/* --- compare page: staggered entrance --- */
+@keyframes cmpFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes cmpColIn{from{opacity:0;transform:perspective(900px) rotateX(14deg) translateY(18px)}to{opacity:1;transform:perspective(900px) rotateX(0) translateY(0)}}
+@keyframes cmpCellIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes cmpBestGlow{0%{box-shadow:0 0 0 0 rgba(139,92,246,0)}45%{box-shadow:0 0 0 3px rgba(139,92,246,.25)}100%{box-shadow:0 0 0 0 rgba(139,92,246,0)}}
+.cmp-page .cmp-in{animation:cmpFadeUp .5s cubic-bezier(.22,.9,.34,1) both}
+.cmp-page .cmp-in.d1{animation-delay:.08s}
+.cmp-page .cmp-in.d2{animation-delay:.18s}
+.cmp-table .cmp-head{animation:cmpColIn .55s cubic-bezier(.22,.9,.34,1) both;animation-delay:calc(var(--ci,0)*70ms + .12s)}
+.cmp-table .cmp-cell.cmp-label{animation:cmpCellIn .45s ease both;animation-delay:calc(var(--ri,1)*55ms + .2s)}
+.cmp-table .cmp-cell.cmp-val{animation:cmpCellIn .45s ease both;animation-delay:calc(var(--ri,1)*55ms + var(--ci,0)*35ms + .22s)}
+.cmp-table .cmp-val.is-best{animation:cmpCellIn .45s ease both,cmpBestGlow 1.2s ease .9s 1;animation-delay:calc(var(--ri,1)*55ms + var(--ci,0)*35ms + .22s),.9s}
+.cmp-sug-chip{animation:cmpFadeUp .4s ease both;animation-delay:calc(var(--ci,0)*45ms + .3s)}
+@media (prefers-reduced-motion:reduce){
+  .cmp-page .cmp-in,.cmp-table .cmp-cell,.cmp-sug-chip{animation:none!important}
+}
+
+/* --- 3D page loader (auth bootstrap screen) --- */
+.ld3d{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ld3d-scene{position:relative;width:130px;height:120px;perspective:520px;display:flex;align-items:center;justify-content:center}
+.ld3d-glow{position:absolute;top:10px;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,92,246,.28),transparent 65%);
+  filter:blur(6px);animation:ld3dPulse 1.8s ease-in-out infinite}
+.ld3d-cube{position:relative;width:56px;height:56px;transform-style:preserve-3d;
+  animation:ld3dSpin 2.8s linear infinite}
+.ld3d-cube i{position:absolute;inset:0;border:1.5px solid rgba(139,92,246,.55);border-radius:8px;
+  background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(34,211,238,.1));
+  box-shadow:inset 0 0 18px rgba(139,92,246,.18)}
+.ld3d-f1{transform:rotateY(0deg) translateZ(28px)}
+.ld3d-f2{transform:rotateY(90deg) translateZ(28px)}
+.ld3d-f3{transform:rotateY(180deg) translateZ(28px)}
+.ld3d-f4{transform:rotateY(270deg) translateZ(28px)}
+.ld3d-f5{transform:rotateX(90deg) translateZ(28px)}
+.ld3d-f6{transform:rotateX(-90deg) translateZ(28px)}
+.ld3d-shadow{position:absolute;bottom:2px;width:66px;height:12px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(139,92,246,.35),transparent 70%);
+  filter:blur(3px);animation:ld3dShadow 2.8s linear infinite}
+.ld3d-brand{display:flex;align-items:center;gap:8px;color:var(--text,#e2e8f0);font-weight:800;font-size:15px;margin-top:6px}
+.ld3d-brand svg{color:var(--primary,#8b5cf6)}
+.ld3d-sub{color:var(--text-muted,#94a3b8);font-size:12.5px}
+.ld3d-bar{width:180px;height:4px;border-radius:99px;background:rgba(148,163,184,.18);overflow:hidden;margin-top:6px}
+.ld3d-bar span{display:block;width:40%;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--primary,#8b5cf6),#22d3ee,var(--primary,#8b5cf6));
+  animation:ld3dBar 1.4s ease-in-out infinite}
+@keyframes ld3dSpin{to{transform:rotateX(360deg) rotateY(720deg)}}
+@keyframes ld3dPulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes ld3dShadow{0%,100%{transform:scaleX(.7);opacity:.5}50%{transform:scaleX(1.05);opacity:.9}}
+@keyframes ld3dBar{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+@media (prefers-reduced-motion:reduce){
+  .ld3d-cube,.ld3d-glow,.ld3d-shadow,.ld3d-bar span{animation:none}
+}

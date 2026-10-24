@@ -1,3 +1,5 @@
+import { playPop } from "./sound";
+
 const KEY = "mahai-cart";
 let items = [];
 try { items = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { items = []; }
@@ -20,6 +22,7 @@ export const cartApi = {
                            image: p.image_url, qty: Math.min(10, qty) }];
     }
     emit();
+    playPop(); // round-10: پاپ کوتاه همزمان با پرواز به سبد (throttle داخلی دارد)
   },
   remove(id) { items = items.filter(i => i.id !== id); emit(); },
   setQty(id, q) {

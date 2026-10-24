@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Globe, Menu, X, Wallet, LifeBuoy, LayoutDashboard,
   Trophy, BarChart3, Shield, Briefcase, User, LogOut, ChevronDown, Palette, Store,
-  Search, Package, Bot, Puzzle, Code2, Sparkles, TrendingUp, Percent, ShoppingBag, Heart, Scale
+  Search, Package, Bot, Puzzle, Code2, Sparkles, TrendingUp, Percent, ShoppingBag, Heart, Scale,
+  GraduationCap, Newspaper, MessagesSquare, Users, Mail, Info, Volume2, VolumeX
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { soundApi } from '../../sound';
 import ThemeSwitcher from '../common/ThemeSwitcher';
 import NotificationSystem from '../common/NotificationSystem';
 import './Navbar.css';
@@ -16,13 +18,19 @@ import WishlistIcon from '../common/WishlistIcon';
 import CompareIcon from '../common/CompareIcon';
 import client from '../../api/client';
 
+/* ── MahAI round-10: منوی دسته‌بندی‌شده ─────────────────────────────
+   ۸ لینک همیشه‌نمایان → ۵ آیتم مرتب: فروشگاه (مگا) + ۳ گروه کشویی + درباره ما */
+
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const [dropOpen, setDropOpen] = useState(null);
+  const [sndOff, setSndOff] = useState(soundApi.isMuted());
   const [q, setQ] = useState('');
   const [cats, setCats] = useState([]);
   const userWrapRef = useRef(null);
@@ -58,6 +66,7 @@ const Navbar = () => {
     localStorage.setItem('i18nextLng', next);
     document.dir = next === 'fa' ? 'rtl' : 'ltr';
   };
+  const toggleSound = () => setSndOff(soundApi.toggle());
   const langLabel = i18n.language === 'fa' ? 'EN' : 'فا';
   const isAdmin = !!(user && (user.role === 'admin' || user.is_admin));
 
@@ -69,15 +78,47 @@ const Navbar = () => {
     setMegaOpen(false);
   };
 
-  const mainLinks = [
-    { to: '/shop', label: 'فروشگاه', mega: true },
-    { to: '/about', label: t('about', 'درباره ما') },
-    { to: '/blog', label: 'مقالات' },
-    { to: '/courses', label: t('courses', 'آموزش‌ها') },
-    { to: '/members', label: t('members', 'اعضا') },
-    { to: '/forum', label: t('forum', 'انجمن') },
-    { to: '/pricing', label: t('pricing', 'تعرفه') },
-    { to: '/contact', label: t('contact', 'تماس با ما') },
+  /* ── گروه‌های منوی دسکتاپ ── */
+  const navGroups = [
+    { type: 'link', to: '/shop', label: 'فروشگاه', mega: true },
+    {
+      type: 'drop', label: 'آموزش و مقالات', match: ['/courses', '/blog'],
+      items: [
+        { to: '/courses', label: 'آموزش‌ها', desc: 'دوره‌های ویدیویی تخصصی', icon: <GraduationCap size={16} /> },
+        { to: '/blog', label: 'مقالات', desc: 'آخرین نوشته‌ها و اخبار', icon: <Newspaper size={16} /> },
+      ],
+    },
+    {
+      type: 'drop', label: 'جامعه', match: ['/forum', '/members'],
+      items: [
+        { to: '/forum', label: 'انجمن', desc: 'پرسش و پاسخ با کارشناسان', icon: <MessagesSquare size={16} /> },
+        { to: '/members', label: 'اعضا', desc: 'متخصصان ماه‌افزار', icon: <Users size={16} /> },
+      ],
+    },
+    {
+      type: 'drop', label: 'خدمات', match: ['/pricing', '/support', '/contact'],
+      items: [
+        { to: '/pricing', label: 'تعرفه خدمات', desc: 'پلن‌ها و قیمت‌ها', icon: <Percent size={16} /> },
+        { to: '/support', label: 'پشتیبانی', desc: 'تیکت و راهنمای سایت', icon: <LifeBuoy size={16} /> },
+        { to: '/contact', label: 'تماس با ما', desc: 'راه‌های ارتباطی', icon: <Mail size={16} /> },
+      ],
+    },
+    { type: 'link', to: '/about', label: t('about', 'درباره ما') },
+  ];
+
+  /* ── منوی موبایل: فهرست منظم با سرتیتر بخش‌ها ── */
+  const mobileLinks = [
+    { to: '/shop', label: 'فروشگاه', icon: <ShoppingBag size={16} /> },
+    { cap: 'محتوا و جامعه' },
+    { to: '/courses', label: 'آموزش‌ها', icon: <GraduationCap size={16} /> },
+    { to: '/blog', label: 'مقالات', icon: <Newspaper size={16} /> },
+    { to: '/forum', label: 'انجمن', icon: <MessagesSquare size={16} /> },
+    { to: '/members', label: 'اعضا', icon: <Users size={16} /> },
+    { cap: 'خدمات و ارتباط' },
+    { to: '/pricing', label: 'تعرفه خدمات', icon: <Percent size={16} /> },
+    { to: '/support', label: 'پشتیبانی', icon: <LifeBuoy size={16} /> },
+    { to: '/contact', label: 'تماس با ما', icon: <Mail size={16} /> },
+    { to: '/about', label: 'درباره ما', icon: <Info size={16} /> },
   ];
 
   const megaQuick = [
@@ -92,6 +133,7 @@ const Navbar = () => {
     { to: '/gamification', label: t('gamification', 'بازی‌سازی'), icon: <Trophy size={16} /> },
     { to: '/analytics', label: t('analytics', 'تحلیل'), icon: <BarChart3 size={16} /> },
     { to: '/profile', label: t('profile', 'پروفایل'), icon: <User size={16} /> },
+    { to: '/wallet', label: 'کیف پول', icon: <Wallet size={16} /> },
     { to: '/appearance', label: 'شخصی‌سازی ظاهر', icon: <Palette size={16} /> },
     ...(isAdmin ? [{ to: '/admin/shop', label: 'مدیریت فروشگاه', icon: <Store size={16} /> }] : []),
     ...(isAdmin ? [{ to: '/admin', label: t('admin_panel', 'پنل ادمین'), icon: <Shield size={16} /> }] : []),
@@ -109,12 +151,37 @@ const Navbar = () => {
         </Link>
 
         <div className="nav-center">
-          {mainLinks.map(l => l.mega ? (
-            <div key={l.to} className="mh-mega-wrap" ref={megaRef}
+          {navGroups.map(g => g.type === 'drop' ? (
+            <div key={g.label} className="nv-drop-wrap"
+                 onMouseEnter={() => setDropOpen(g.label)}
+                 onMouseLeave={() => setDropOpen(null)}>
+              <button type="button"
+                      className={'nv-link nv-drop-btn' + (g.match.some(m => pathname.startsWith(m)) ? ' active' : '')}
+                      onClick={() => setDropOpen(o => o === g.label ? null : g.label)}>
+                {g.label}
+                <ChevronDown size={13} className={dropOpen === g.label ? 'rot' : ''} />
+              </button>
+              <AnimatePresence>
+                {dropOpen === g.label && (
+                  <motion.div className="nv-dd"
+                    initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.18 }}>
+                    {g.items.map(it => (
+                      <Link key={it.to} to={it.to} className="nv-dd-item" onClick={() => setDropOpen(null)}>
+                        <span className="nv-dd-ic">{it.icon}</span>
+                        <span className="nv-dd-txt"><b>{it.label}</b><small>{it.desc}</small></span>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : g.mega ? (
+            <div key={g.to} className="mh-mega-wrap" ref={megaRef}
                  onMouseEnter={() => setMegaOpen(true)}
                  onMouseLeave={() => setMegaOpen(false)}>
-              <NavLink to={l.to} className={cls} onClick={() => setMegaOpen(false)}>
-                {l.label}
+              <NavLink to={g.to} className={cls} onClick={() => setMegaOpen(false)}>
+                {g.label}
                 <ChevronDown size={13} className={megaOpen ? 'rot' : ''} style={{ marginInlineStart: 4 }} />
               </NavLink>
               <AnimatePresence>
@@ -151,14 +218,14 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
           ) : (
-            <NavLink key={l.to} to={l.to} className={cls}>{l.label}</NavLink>
+            <NavLink key={g.to} to={g.to} className={cls}>{g.label}</NavLink>
           ))}
         </div>
 
         <form className="mh-nav-search" onSubmit={doSearch} role="search">
           <Search size={15} className="mh-ns-ic" />
           <input value={q} onChange={e => setQ(e.target.value)}
-                 placeholder="جستجو در محصولات و خدمات..." aria-label="search" />
+                 placeholder="جستجو در محصولات..." aria-label="search" />
           <button type="submit">جستجو</button>
         </form>
 
@@ -166,8 +233,6 @@ const Navbar = () => {
           <CartIcon />
           <WishlistIcon />
           <CompareIcon />
-          <Link to="/wallet" className="icon-btn" title="کیف پول"><Wallet size={18} /></Link>
-          <Link to="/support" className="icon-btn" title="پشتیبانی"><LifeBuoy size={18} /></Link>
           <div className="ts-h"><ThemeSwitcher /></div>
           <button className="lang-btn" onClick={toggleLanguage} title="تغییر زبان">
             <Globe size={15} />{langLabel}
@@ -193,6 +258,10 @@ const Navbar = () => {
                         {it.icon}<span>{it.label}</span>
                       </Link>
                     ))}
+                    <button className="ud-item" onClick={toggleSound}>
+                      {sndOff ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                      <span>افکت صدا: {sndOff ? 'خاموش' : 'روشن'}</span>
+                    </button>
                     <button className="ud-item danger" onClick={handleLogout}>
                       <LogOut size={16} /><span>{t('logout', 'خروج')}</span>
                     </button>
@@ -226,17 +295,26 @@ const Navbar = () => {
                      placeholder="جستجو در محصولات و خدمات..." aria-label="search" />
               <button type="submit">جستجو</button>
             </form>
-            {mainLinks.map(l => (
-              <NavLink key={l.to} to={l.to} className={cls} onClick={() => setMobileOpen(false)}>{l.label}</NavLink>
+            {mobileLinks.map((l, i) => l.cap ? (
+              <div key={'cap' + i} className="mm-cap">{l.cap}</div>
+            ) : (
+              <NavLink key={l.to} to={l.to} className={cls} onClick={() => setMobileOpen(false)}>
+                {l.icon}<span>{l.label}</span>
+              </NavLink>
             ))}
             <div className="mm-sep" />
             <Link to="/wishlist" className="mm-item" onClick={() => setMobileOpen(false)}><Heart size={16} /><span>علاقه‌مندی‌ها</span></Link>
             <Link to="/compare" className="mm-item" onClick={() => setMobileOpen(false)}><Scale size={16} /><span>مقایسه محصولات</span></Link>
             <Link to="/wallet" className="mm-item" onClick={() => setMobileOpen(false)}><Wallet size={16} /><span>کیف پول</span></Link>
-            <Link to="/support" className="mm-item" onClick={() => setMobileOpen(false)}><LifeBuoy size={16} /><span>پشتیبانی</span></Link>
             {user && userMenuItems.map(it => (
               <Link key={it.to} to={it.to} className="mm-item" onClick={() => setMobileOpen(false)}>{it.icon}<span>{it.label}</span></Link>
             ))}
+            {user && (
+              <button className="mm-item" onClick={toggleSound}>
+                {sndOff ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                <span>افکت صدا: {sndOff ? 'خاموش' : 'روشن'}</span>
+              </button>
+            )}
             <div className="mm-sep" />
             <div className="mm-row">
               <div className="ts-h"><ThemeSwitcher /></div>

@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { useSettings } from './contexts/SettingsContext';
-import { useTranslation } from 'react-i18next';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ChatWidget from './components/chat/ChatWidget';
@@ -10,6 +9,7 @@ import BottomNav from './components/mobile/BottomNav';
 import OfflineIndicator from './components/common/OfflineIndicator';
 import NotificationSystem from './components/common/NotificationSystem';
 import InstallPrompt from './components/common/InstallPrompt';
+import Loader3D from './components/common/Loader3D';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import Members from './pages/Members';
@@ -44,13 +44,11 @@ import './App.css';
 function App() {
   const { loading } = useAuth();
   const { settings } = useSettings();
-  const { t } = useTranslation();
 
   if (loading) {
     return (
       <div className="loading-screen">
-        <div className="spinner"></div>
-        <p>{t('loading')}</p>
+        <Loader3D />
       </div>
     );
   }

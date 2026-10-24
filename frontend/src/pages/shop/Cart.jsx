@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import { ShoppingBag, Tag, Wallet, Download, ArrowLeft, ArrowRight } from "lucide-react";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import { playSuccess } from "../../sound";
 import Confetti from "../../components/common/Confetti";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
@@ -68,6 +69,7 @@ export default function Cart() {
       const r = await client.post("/shop/checkout", {
         items: items.map(i => ({ product_id: i.id, qty: i.qty })), coupon_code: coupon });
       setDone(r.data.order); cartApi.clear(); setStep(3);
+      playSuccess(); // round-10: افکت صوتی موفقیت همزمان با جشن کانفتی
     } catch (e) { setMsg((e.response && e.response.data && e.response.data.message) || "خطا در پرداخت"); }
     setBusy(false);
   };
