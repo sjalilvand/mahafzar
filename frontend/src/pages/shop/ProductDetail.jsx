@@ -2,6 +2,7 @@ import React, { useEffect, useState, useSyncExternalStore } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import { flyToCart } from "../../flyToCart";
 import { wishlistApi } from "../../wishlistStore";
 import { compareApi } from "../../compareStore";
 import Stars from "../../components/common/Stars";
@@ -177,7 +178,7 @@ function BundleBox({ bundle, onAddAll }) {
           <b className="mh-bd-final">{fmt(final)} <small>تومان</small></b>
           {save > 0 && <span className="mh-bd-save">صرفه‌جویی: {fmt(save)} تومان</span>}
         </div>
-        <button className="shop-add" disabled={sel.length === 0} onClick={() => onAddAll(sel)}>
+        <button className="shop-add" disabled={sel.length === 0} onClick={(e) => onAddAll(sel, e.currentTarget)}>
           <ShoppingBag size={15} /> {sel.length === bundle.items.length
             ? "افزودن همه به سبد"
             : `افزودن ${new Intl.NumberFormat("fa-IR").format(sel.length)} مورد`}
@@ -213,8 +214,10 @@ export default function ProductDetail() {
   if (!data) return <div className="biz-page"><p className="biz-sub">در حال بارگذاری...</p></div>;
   if (data.nf) return <div className="biz-page"><p>محصول یافت نشد.</p><Link className="biz-btn" to="/shop">بازگشت به فروشگاه</Link></div>;
   const p = data.product;
-  const buyNow = () => { cartApi.add(p); nav("/cart"); };
-  const addAll = (list) => {
+  const pdHeroImg = () => document.querySelector(".mh-pd-hero img");
+  const buyNow = () => { flyToCart(pdHeroImg(), p.image_url); cartApi.add(p); setTimeout(() => nav("/cart"), 380); };
+  const addAll = (list, srcEl) => {
+    flyToCart(srcEl || null, list.length === 1 ? list[0].image_url : null);
     list.forEach(x => cartApi.add(x));
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -243,7 +246,7 @@ export default function ProductDetail() {
           <b style={{ fontSize: 24, color: "#22d3ee" }}>{fmt(p.final_price)} <small>تومان</small></b>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <button className="biz-btn" onClick={() => { cartApi.add(p); setMsg("✅ به سبد اضافه شد"); }}>افزودن به سبد</button>
+          <button className="biz-btn" onClick={(e) => { flyToCart(pdHeroImg(), p.image_url); cartApi.add(p); setMsg("✅ به سبد اضافه شد"); }}>افزودن به سبد</button>
           <button className="btn-auth solid" onClick={buyNow}>خرید فوری</button>
           <button className={"btn-auth ghost" + (inCmp ? " mh-cmp-on" : "")} onClick={toggleCompare}>
             <Scale size={15} style={{ marginInlineEnd: 5 }} /> {inCmp ? "در مقایسه ✓" : "افزودن به مقایسه"}
@@ -276,7 +279,7 @@ export default function ProductDetail() {
                 <Link to={"/product/" + r.slug} className="shop-card-body"><h3>{r.name}</h3></Link>
                 <div className="shop-meta"><Stars rating={r.rating} count={r.rating_count} /></div>
                 <div className="shop-card-foot"><b style={{ color: "#22d3ee" }}>{fmt(r.final_price)} <small>تومان</small></b>
-                  <button className="biz-btn" onClick={() => cartApi.add(r)}>افزودن</button></div>
+                  <button className="biz-btn" onClick={(e) => { flyToCart(e.currentTarget.closest('.shop-card')?.querySelector('.shop-thumb'), r.image_url); cartApi.add(r); }}>افزودن</button></div>
               </div>
             ))}
           </div>

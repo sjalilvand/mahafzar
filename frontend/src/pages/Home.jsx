@@ -6,7 +6,9 @@ import axios from 'axios';
 import client from '../api/client';
 import { cartApi } from '../cartStore';
 import { wishlistApi } from '../wishlistStore';
+import { flyToCart } from '../flyToCart';
 import Stars from '../components/common/Stars';
+import HeroCanvas3D from '../components/home/HeroCanvas3D';
 import {
   Brain, Shield, Database, Activity, Server, Cpu,
   Phone, Mail, MapPin, CheckCircle, Zap, ArrowRight,
@@ -160,7 +162,9 @@ const MarketCard = ({ p }) => (
     </div>
     <div className="mh-pcard-actions">
       <Link to={'/product/' + p.slug} className="mh-pcard-preview"><Eye size={14} /> مشاهده</Link>
-      <button onClick={() => cartApi.add(p)}><ShoppingBag size={14} /> خرید</button>
+      <button onClick={(e) => { flyToCart(e.currentTarget.closest('.mh-pcard')?.querySelector('.shop-thumb'), p.image_url); cartApi.add(p); }}>
+        <ShoppingBag size={14} /> خرید
+      </button>
     </div>
   </motion.div>
 );
@@ -227,6 +231,7 @@ const Home = () => {
     <div className="home-page">
       {/* ============= HERO SECTION ============= */}
       <section className="hero">
+        <HeroCanvas3D />
         <motion.div
           className="hero-content"
           initial="hidden"
@@ -290,7 +295,7 @@ const Home = () => {
               animate={{ rotate: 360 }}
               transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
             />
-            <Cpu size={80} className="core-icon" color="#8b5cf6" />
+            <Cpu size={80} className="core-icon" color="var(--primary)" />
             <motion.div
               className="pulse-ring"
               animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}

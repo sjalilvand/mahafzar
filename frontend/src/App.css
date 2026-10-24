@@ -243,14 +243,14 @@ body::before {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #0f0;
+  color: #34d399;
   font-size: 0.9rem;
 }
 
 .status-dot {
   width: 10px;
   height: 10px;
-  background: #0f0;
+  background: #34d399;
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
@@ -2249,3 +2249,133 @@ body.theme-light .app-container .icon-btn svg,
 body.theme-light .app-container .nv-link { color: #475569; }
 body.theme-light .app-container .nv-link:hover { color: #7c3aed; background: rgba(124, 58, 237, 0.08); }
 body.theme-light .app-container .user-btn { background: #f1f5f9; }
+
+/* ==================== ROUND 9: 3D hero canvas / fly-to-cart / checkout success / sunset theme ==================== */
+
+/* ---------- WebGL 3D hero canvas ---------- */
+.hero-canvas3d{
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:0; pointer-events:none; opacity:.95;
+  -webkit-mask-image:linear-gradient(to bottom, #000 58%, transparent 97%);
+          mask-image:linear-gradient(to bottom, #000 58%, transparent 97%);
+}
+.theme-light .hero-canvas3d{ opacity:.5 }
+
+/* ---------- fly-to-cart chip ---------- */
+.fly-chip{
+  position:fixed; z-index:9999; width:16px; height:16px; border-radius:50%;
+  pointer-events:none; will-change:transform,opacity;
+  background:radial-gradient(circle at 30% 30%, #c4b5fd, var(--primary) 55%, var(--accent));
+  box-shadow:0 0 14px rgba(139,92,246,.85), 0 0 4px rgba(217,70,239,.6);
+}
+.fly-chip.has-img{
+  width:46px; height:46px; border-radius:12px; overflow:hidden;
+  box-shadow:0 10px 26px rgba(0,0,0,.45), 0 0 0 2px rgba(139,92,246,.35), 0 0 18px rgba(139,92,246,.5);
+}
+.fly-chip.has-img img{ width:100%; height:100%; object-fit:cover; display:block }
+
+/* ضربه badge سبد خرید هنگام رسیدن آیتم */
+.cart-bump{ animation:cartIconPulse .55s cubic-bezier(.34,1.56,.64,1) }
+.cart-bump .cart-badge{ animation:badgePop .55s cubic-bezier(.34,1.56,.64,1); background:#d946ef }
+@keyframes cartIconPulse{
+  0%{ transform:scale(1) rotate(0) }
+  30%{ transform:scale(1.18) rotate(-8deg) }
+  60%{ transform:scale(.96) rotate(6deg) }
+  100%{ transform:scale(1) rotate(0) }
+}
+@keyframes badgePop{
+  0%{ transform:scale(1) }
+  40%{ transform:scale(1.65) }
+  100%{ transform:scale(1) }
+}
+
+/* ---------- checkout success: تیک متحرک + کانفاس ---------- */
+.confetti-canvas{
+  position:fixed; inset:0; width:100%; height:100%;
+  z-index:9998; pointer-events:none;
+}
+.co-final{ text-align:center }
+.co-final-pop{ animation:coFinalIn .55s cubic-bezier(.22,1,.36,1) backwards }
+@keyframes coFinalIn{
+  from{ opacity:0; transform:translateY(26px) scale(.97) }
+  to{ opacity:1; transform:none }
+}
+.co-check{
+  margin-bottom:6px;
+  filter:drop-shadow(0 0 18px rgba(16,185,129,.55));
+  animation:checkPop .6s cubic-bezier(.34,1.56,.64,1) .15s backwards;
+}
+.co-check-ring{
+  stroke:#10b981; stroke-linecap:round;
+  stroke-dasharray:202; stroke-dashoffset:202;
+  animation:ringDraw .7s ease-out forwards;
+}
+.co-check-mark{
+  stroke:#34d399;
+  stroke-dasharray:42; stroke-dashoffset:42;
+  animation:markDraw .45s ease-out .55s forwards;
+}
+@keyframes ringDraw{ to{ stroke-dashoffset:0 } }
+@keyframes markDraw{ to{ stroke-dashoffset:0 } }
+@keyframes checkPop{
+  0%{ transform:scale(.4); opacity:0 }
+  100%{ transform:scale(1); opacity:1 }
+}
+
+/* ---------- تم «غروب» — نارنجی/صورتی روی آسفالت گرم ---------- */
+body.theme-sunset{
+  --grad-signature:linear-gradient(135deg,#f97316,#f43f5e);
+  color-scheme:dark;
+}
+body.theme-sunset::before{
+  background-image:
+    linear-gradient(rgba(249,115,22,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249,115,22,.035) 1px, transparent 1px);
+}
+body.theme-sunset::after{
+  background:
+    radial-gradient(ellipse at 32% 42%, rgba(249,115,22,.17), transparent 62%),
+    radial-gradient(ellipse at 74% 28%, rgba(244,63,94,.12), transparent 56%);
+}
+body.theme-sunset .navbar{
+  background:rgba(26,10,10,.82);
+  border-bottom-color:rgba(249,115,22,.14);
+}
+body.theme-sunset .glass-card{
+  background:rgba(45,21,21,.6);
+  border-color:rgba(249,115,22,.14);
+}
+body.theme-sunset .biz-card{
+  background:rgba(45,21,21,.72);
+  border-color:rgba(249,115,22,.16);
+}
+body.theme-sunset .card::before, body.theme-sunset .glass-card::before{
+  background:linear-gradient(155deg, rgba(249,115,22,.5), rgba(255,255,255,.05) 28%, transparent 55%, rgba(251,191,36,.26));
+}
+body.theme-sunset .hero h1{ color:#fff7ed; text-shadow:0 4px 34px rgba(249,115,22,.35) }
+body.theme-sunset .section-title::after{
+  background:linear-gradient(90deg,#f97316,#fbbf24,#f43f5e);
+  box-shadow:0 0 18px rgba(249,115,22,.65);
+}
+body.theme-sunset .card:hover, body.theme-sunset .glass-card:hover,
+body.theme-sunset .mh-pcard:hover, body.theme-sunset .mh-acard:hover, body.theme-sunset .mh-bundle:hover{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.11),
+    inset 0 -1px 0 rgba(0,0,0,.22),
+    0 6px 14px rgba(5,3,15,.45),
+    0 30px 62px -18px rgba(249,115,22,.4);
+}
+body.theme-sunset ::selection{ background:rgba(251,146,60,.35) }
+body.theme-sunset ::-webkit-scrollbar-track{ background:#1a0a0a }
+body.theme-sunset ::-webkit-scrollbar-thumb{ background:rgba(249,115,22,.4) }
+body.theme-sunset .orbit{ border-color:rgba(249,115,22,.4) }
+body.theme-sunset .orbit-2{ border-color:rgba(239,68,68,.35) }
+body.theme-sunset .orbit-3{ border-color:rgba(251,191,36,.55) }
+body.theme-sunset .pulse-ring{ border-color:rgba(249,115,22,.55) }
+body.theme-sunset .hero-visual .core-icon{ filter:drop-shadow(0 0 16px rgba(249,115,22,.9)) }
+body.theme-sunset .hero-visual .ai-core::before{ box-shadow:0 0 60px rgba(249,115,22,.5), 0 0 120px rgba(244,63,94,.35) }
+
+@media (prefers-reduced-motion: reduce){
+  .cart-bump, .cart-bump .cart-badge, .co-check, .co-final-pop{ animation:none }
+  .co-check-ring, .co-check-mark{ animation:none; stroke-dashoffset:0 }
+}

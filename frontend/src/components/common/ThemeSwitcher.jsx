@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../contexts/ThemeContext';
-import { Sun, Moon, Zap } from 'lucide-react';
+import { Sun, Moon, Zap, Sunset } from 'lucide-react';
 
 const ThemeSwitcher = () => {
   const { theme, changeTheme, availableThemes } = useTheme();
@@ -10,7 +10,8 @@ const ThemeSwitcher = () => {
   const icons = {
     dark: <Moon size={20} />,
     light: <Sun size={20} />,
-    cyberpunk: <Zap size={20} />
+    cyberpunk: <Zap size={20} />,
+    sunset: <Sunset size={20} />
   };
 
   return (

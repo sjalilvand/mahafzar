@@ -46,12 +46,12 @@ const AdminDashboard = () => {
   };
 
   const statCards = [
-    { label: 'کاربران', value: stats?.total_users || 0, icon: <Users size={30} />, color: '#8b5cf6' },
-    { label: 'اعضا', value: stats?.total_members || 0, icon: <UserPlus size={30} />, color: '#6366f1' },
-    { label: 'آموزش‌ها', value: stats?.total_courses || 0, icon: <BookOpen size={30} />, color: '#0f0' },
-    { label: 'نظرات', value: stats?.total_comments || 0, icon: <MessageSquare size={30} />, color: '#ffa500' },
-    { label: 'بازخوردها', value: stats?.total_suggestions || 0, icon: <FileText size={30} />, color: '#d946ef' },
-    { label: 'بازدیدها', value: stats?.total_views || 0, icon: <Eye size={30} />, color: '#ff0' },
+    { label: 'کاربران', value: stats?.total_users || 0, icon: <Users size={26} />, c1: '#8b5cf6', c2: '#6366f1' },
+    { label: 'اعضا', value: stats?.total_members || 0, icon: <UserPlus size={26} />, c1: '#6366f1', c2: '#22d3ee' },
+    { label: 'آموزش‌ها', value: stats?.total_courses || 0, icon: <BookOpen size={26} />, c1: '#22d3ee', c2: '#0ea5e9' },
+    { label: 'نظرات', value: stats?.total_comments || 0, icon: <MessageSquare size={26} />, c1: '#fbbf24', c2: '#f97316' },
+    { label: 'بازخوردها', value: stats?.total_suggestions || 0, icon: <FileText size={26} />, c1: '#d946ef', c2: '#f43f5e' },
+    { label: 'بازدیدها', value: stats?.total_views || 0, icon: <Eye size={26} />, c1: '#34d399', c2: '#10b981' },
   ];
 
   const renderContent = () => {
@@ -62,15 +62,12 @@ const AdminDashboard = () => {
             <h2>داشبورد مدیریت</h2>
             <div className="stats-grid">
               {statCards.map((stat, idx) => (
-                <motion.div
+                <div
                   key={idx}
-                  className="stat-card glass-card"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ y: -5 }}
+                  className="stat-card glass-card stat-card-3d"
+                  style={{ '--sc': stat.c1, '--sc2': stat.c2, '--d': (idx * 0.07) + 's' }}
                 >
-                  <div className="stat-card-icon" style={{ color: stat.color }}>
+                  <div className="stat-card-icon">
                     {stat.icon}
                   </div>
                   <div className="stat-card-info">
@@ -79,9 +76,9 @@ const AdminDashboard = () => {
                   </div>
                   <div className="stat-card-trend">
                     <TrendingUp size={16} />
-                    <span>+{Math.floor(Math.random() * 20)}%</span>
+                    <span>+{Math.floor(Math.random() * 20)}٪</span>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
 

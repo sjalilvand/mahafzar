@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSyncExternalStore } from "react";
-import { ShoppingBag, Tag, Wallet, Download, CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
+import { ShoppingBag, Tag, Wallet, Download, ArrowLeft, ArrowRight } from "lucide-react";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import Confetti from "../../components/common/Confetti";
 
 const fmt = n => new Intl.NumberFormat("fa-IR").format(n || 0);
 const STEPS = ["سبد خرید", "تخفیف و بررسی", "پرداخت", "دریافت"];
@@ -95,8 +96,13 @@ export default function Cart() {
       </div>
 
       {step === 3 && done ? (
-        <div className="biz-card co-final">
-          <CheckCircle2 size={54} className="co-final-icon" />
+        <>
+          <Confetti />
+          <div className="biz-card co-final co-final-pop">
+          <svg className="co-check" viewBox="0 0 72 72" width="72" height="72" aria-hidden="true">
+            <circle className="co-check-ring" cx="36" cy="36" r="32" fill="none" strokeWidth="4" />
+            <path className="co-check-mark" d="M22 37.5 L32 47 L51 27" fill="none" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           <h2>خرید شما با موفقیت انجام شد!</h2>
           <p>کد سفارش: <b className="co-ref">{done.ref_code}</b></p>
           <p>مبلغ پرداخت‌شده: <b>{fmt(done.total)} تومان</b> {done.coupon_discount > 0 && <span className="co-save">(صرفه‌جویی با کد تخفیف: {done.coupon_discount}٪)</span>}</p>
@@ -114,7 +120,8 @@ export default function Cart() {
             <Link to="/shop" className="btn-auth ghost" style={{ textDecoration: "none" }}>ادامه خرید</Link>
             <Link to="/profile" className="biz-btn" style={{ textDecoration: "none" }}>سفارش‌های من</Link>
           </div>
-        </div>
+          </div>
+        </>
       ) : step === 0 ? (
         <>
           <div className="biz-card">

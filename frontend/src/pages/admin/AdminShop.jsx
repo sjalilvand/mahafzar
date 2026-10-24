@@ -164,11 +164,11 @@ export default function AdminShop() {
     labels: (sales.series || []).map(s => s.label),
     datasets: [
       { label: "درآمد (تومان)", data: (sales.series || []).map(s => s.revenue),
-        borderColor: "#22d3ee", backgroundColor: "rgba(34,211,238,.16)",
-        fill: true, tension: .38, pointRadius: 2.5, pointBackgroundColor: "#22d3ee", yAxisID: "y" },
+        borderColor: "#d946ef", backgroundColor: "rgba(217,70,239,.16)",
+        fill: true, tension: .38, pointRadius: 2.5, pointBackgroundColor: "#d946ef", yAxisID: "y" },
       { label: "سفارش‌ها", data: (sales.series || []).map(s => s.orders),
-        borderColor: "#fbbf24", backgroundColor: "rgba(251,191,36,.1)",
-        fill: false, tension: .38, pointRadius: 2.5, pointBackgroundColor: "#fbbf24", yAxisID: "y1" },
+        borderColor: "#22d3ee", backgroundColor: "rgba(34,211,238,.1)",
+        fill: false, tension: .38, pointRadius: 2.5, pointBackgroundColor: "#22d3ee", yAxisID: "y1" },
     ],
   } : null;
   const chartOpts = {
@@ -178,10 +178,10 @@ export default function AdminShop() {
                tooltip: { rtl: true, titleFont: { family: "inherit" } } },
     scales: {
       x: { ticks: { color: "#64748b", font: { size: 10.5 } }, grid: { color: "rgba(148,163,184,.08)" } },
-      y: { position: "right", ticks: { color: "#22d3ee", font: { size: 10.5 },
+      y: { position: "right", ticks: { color: "#d946ef", font: { size: 10.5 },
            callback: v => (v >= 1000000 ? (v / 1000000) + "م" : v >= 1000 ? (v / 1000) + "ه" : v) },
            grid: { color: "rgba(148,163,184,.08)" } },
-      y1: { position: "left", ticks: { color: "#fbbf24", font: { size: 10.5 }, precision: 0 },
+      y1: { position: "left", ticks: { color: "#22d3ee", font: { size: 10.5 }, precision: 0 },
             grid: { drawOnChartArea: false } },
     },
   };
@@ -231,7 +231,7 @@ export default function AdminShop() {
 
           <div className="biz-card">
             <b style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <BarChart3 size={17} style={{ color: "#22d3ee" }} /> نمودار فروش
+              <BarChart3 size={17} style={{ color: "#d946ef" }} /> نمودار فروش
               <span style={{ marginInlineStart: "auto", display: "flex", gap: 6, alignItems: "center" }}>
                 {[7, 14, 30].map(d => (
                   <button key={d} className={"biz-btn-sm" + (salesDays === d ? " mh-days-on" : "")}

@@ -41,6 +41,19 @@ const themes = {
       accent: '#ffff00',
       glow: '0 0 40px rgba(255, 0, 255, 0.8)',
     }
+  },
+  sunset: {
+    name: 'غروب',
+    colors: {
+      bg: '#1a0a0a',
+      surface: 'rgba(45, 21, 21, 0.6)',
+      text: '#fef3c7',
+      textMuted: '#fdba74',
+      primary: '#f97316',
+      secondary: '#ef4444',
+      accent: '#fbbf24',
+      glow: '0 0 30px rgba(249, 115, 22, 0.5)',
+    }
   }
 };
 

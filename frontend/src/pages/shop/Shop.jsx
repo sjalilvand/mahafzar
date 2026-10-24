@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useSyncExternalStore } from "react
 import { Link, useSearchParams } from "react-router-dom";
 import client from "../../api/client";
 import { cartApi } from "../../cartStore";
+import { flyToCart } from "../../flyToCart";
 import { compareApi } from "../../compareStore";
 import Stars from "../../components/common/Stars";
 import WishlistButton from "../../components/common/WishlistButton";
@@ -75,7 +76,7 @@ function FlashStrip({ items, onAdd }) {
                 <b>{fmt(p.final_price)}</b><small>تومان</small>
               </div>
             </div>
-            <button className="mh-flash-add" onClick={() => onAdd(p)} title="افزودن به سبد">
+            <button className="mh-flash-add" onClick={(e) => onAdd(p, e.currentTarget.closest('.mh-flash-item')?.querySelector('.mh-flash-thumb'))} title="افزودن به سبد">
               <ShoppingBag size={14} />
             </button>
           </div>
@@ -126,7 +127,8 @@ export default function Shop() {
   useEffect(() => { const t = setTimeout(load, 400); return () => clearTimeout(t); }, [q]);
   useEffect(() => { client.get("/shop/categories").then(r => setCats(r.data.categories || [])).catch(() => {}); }, []);
 
-  const addToCart = (p) => {
+  const addToCart = (p, srcEl) => {
+    flyToCart(srcEl || null, p.image_url);
     cartApi.add(p);
     setAddedId(p.id);
     setTimeout(() => setAddedId(null), 1400);
@@ -212,7 +214,7 @@ export default function Shop() {
 
               <div className="shop-card-actions">
                 <Link to={"/product/" + p.slug} className="shop-preview"><Eye size={15} /> پیش‌نمایش</Link>
-                <button className="shop-add" onClick={() => addToCart(p)}>
+                <button className="shop-add" onClick={(e) => addToCart(p, e.currentTarget.closest('.shop-card')?.querySelector('.shop-thumb'))}>
                   <ShoppingBag size={16} /> {addedId === p.id ? "✓ افزوده شد" : "افزودن به سبد"}
                 </button>
               </div>
