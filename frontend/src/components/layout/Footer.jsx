@@ -32,7 +32,7 @@ const Footer = () => {
         <div className="footer-grid mh-footer-grid">
           <div className="footer-col">
             <div className="footer-logo">
-              <Brain size={35} color="#00f2ff" />
+              <Brain size={35} color="#8b5cf6" />
               <h4>ماه‌افزار هوشمند رسا</h4>
             </div>
             <p className="footer-desc">

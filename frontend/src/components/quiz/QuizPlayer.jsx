@@ -108,7 +108,7 @@ const QuizPlayer = ({ quizId, onClose }) => {
         animate={{ opacity: 1, scale: 1 }}
       >
         <div className="quiz-start-card glass-card">
-          <Award size={60} color="#00f2ff" />
+          <Award size={60} color="#8b5cf6" />
           <h2>{quiz.title}</h2>
           <p>{quiz.description}</p>
 

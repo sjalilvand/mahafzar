@@ -83,7 +83,7 @@ const NotificationSystem = () => {
       case 'success': return <CheckCircle size={18} color="#0f0" />;
       case 'warning': return <AlertTriangle size={18} color="#ffa500" />;
       case 'error': return <XCircle size={18} color="#ff4444" />;
-      default: return <Info size={18} color="#00f2ff" />;
+      default: return <Info size={18} color="#8b5cf6" />;
     }
   };
 

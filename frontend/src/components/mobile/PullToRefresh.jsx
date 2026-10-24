@@ -51,7 +51,7 @@ const PullToRefresh = ({ onRefresh, children }) => {
           >
             <RefreshCw
               size={30}
-              color={pullDistance >= threshold ? '#0f0' : '#00f2ff'}
+              color={pullDistance >= threshold ? '#0f0' : '#8b5cf6'}
             />
           </motion.div>
           <span>

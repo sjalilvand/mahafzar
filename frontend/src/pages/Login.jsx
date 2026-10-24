@@ -42,7 +42,7 @@ const Login = () => {
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
           style={{ textAlign: 'center', marginBottom: '20px' }}
         >
-          <LogIn size={50} color="#00f2ff" />
+          <LogIn size={50} color="#8b5cf6" />
         </motion.div>
 
         <h2>ورود به حساب کاربری</h2>

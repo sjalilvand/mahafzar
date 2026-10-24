@@ -6,27 +6,27 @@ const themes = {
   dark: {
     name: 'تاریک',
     colors: {
-      bg: '#0a0a0f',
-      surface: 'rgba(15, 20, 35, 0.6)',
+      bg: '#0b0917',
+      surface: 'rgba(24, 18, 46, 0.6)',
       text: '#e2e8f0',
       textMuted: '#94a3b8',
-      primary: '#00f2ff',
-      secondary: '#4d4dff',
-      accent: '#ff006e',
-      glow: '0 0 30px rgba(0, 242, 255, 0.5)',
+      primary: '#8b5cf6',
+      secondary: '#6366f1',
+      accent: '#d946ef',
+      glow: '0 0 30px rgba(139, 92, 246, 0.5)',
     }
   },
   light: {
     name: 'روشن',
     colors: {
-      bg: '#f0f4f8',
-      surface: 'rgba(255, 255, 255, 0.9)',
-      text: '#1a202c',
-      textMuted: '#4a5568',
-      primary: '#0066cc',
-      secondary: '#5533ff',
-      accent: '#ff006e',
-      glow: '0 0 30px rgba(0, 102, 204, 0.3)',
+      bg: '#f6f7fb',
+      surface: 'rgba(255, 255, 255, 0.92)',
+      text: '#1e293b',
+      textMuted: '#64748b',
+      primary: '#7c3aed',
+      secondary: '#6366f1',
+      accent: '#d946ef',
+      glow: '0 0 30px rgba(124, 58, 237, 0.3)',
     }
   },
   cyberpunk: {
@@ -63,7 +63,17 @@ export const ThemeProvider = ({ children }) => {
     root.style.setProperty('--glow', theme.colors.glow);
 
     localStorage.setItem('theme', currentTheme);
-    document.body.className = `theme-${currentTheme}`;
+    // همگام‌سازی با SettingsContext تا دو سیستم تم با هم نجنگند
+    try {
+      const s = JSON.parse(localStorage.getItem('app_settings') || '{}');
+      if (s.theme !== currentTheme) {
+        s.theme = currentTheme;
+        localStorage.setItem('app_settings', JSON.stringify(s));
+      }
+    } catch (e) { /* noop */ }
+    // فقط کلاس تم را عوض می‌کنیم؛ کلاس‌های font/density حفظ می‌شوند
+    const rest = document.body.className.replace(/theme-\w+/g, '').trim();
+    document.body.className = `theme-${currentTheme}${rest ? ' ' + rest : ''}`;
   }, [currentTheme]);
 
   const changeTheme = (themeName) => {

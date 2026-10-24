@@ -68,7 +68,7 @@ const Signup = () => {
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
           style={{ textAlign: 'center', marginBottom: '20px' }}
         >
-          <UserPlus size={50} color="#00f2ff" />
+          <UserPlus size={50} color="#8b5cf6" />
         </motion.div>
 
         <h2>ثبت‌نام در ماه‌افزار</h2>

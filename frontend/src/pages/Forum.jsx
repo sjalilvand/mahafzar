@@ -305,7 +305,7 @@ const Forum = () => {
                 </div>
 
                 <div className="topic-meta">
-                  <span className="topic-category" style={{ color: topic.category?.color || '#00f2ff' }}>
+                  <span className="topic-category" style={{ color: topic.category?.color || '#8b5cf6' }}>
                     {topic.category?.name}
                   </span>
                   <span className="topic-author">
@@ -357,7 +357,7 @@ const Forum = () => {
               key={tag.id}
               to={`/forum?tag=${tag.slug}`}
               className="tag-item"
-              style={{ borderColor: tag.color || '#00f2ff' }}
+              style={{ borderColor: tag.color || '#8b5cf6' }}
             >
               {tag.name} <span>({tag.topics_count})</span>
             </Link>

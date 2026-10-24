@@ -66,6 +66,9 @@ function App() {
            '--glass-opacity': settings.glassEffect ? 1 : 0.5,
            '--animation-speed': settings.animations ? (settings.reducedMotion ? '0.1s' : '0.3s') : '0s'
          }}>
+      <div className="bg-orb orb-1" aria-hidden="true"></div>
+      <div className="bg-orb orb-2" aria-hidden="true"></div>
+      <div className="bg-orb orb-3" aria-hidden="true"></div>
       <OfflineIndicator />
       <Navbar>
         <NotificationSystem />

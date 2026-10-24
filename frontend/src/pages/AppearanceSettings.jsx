@@ -16,7 +16,7 @@ export default function AppearanceSettings() {
   const [lh, setLh] = useState(saved.lh || 1.7);
   const [ls, setLs] = useState(saved.ls || 0);
   const [radius, setRadius] = useState(saved.radius !== undefined ? saved.radius : 12);
-  const [accent, setAccent] = useState(saved.accent || "#22d3ee");
+  const [accent, setAccent] = useState(saved.accent || "#d946ef");
   const [saved_, setSavedMsg] = useState("");
 
   const commit = (next) => {

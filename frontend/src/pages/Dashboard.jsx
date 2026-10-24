@@ -124,7 +124,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="stat-card glass-card">
-                    <Award size={30} color="#00f2ff" />
+                    <Award size={30} color="#8b5cf6" />
                     <div>
                       <strong>{myStats?.badges?.earned || 0}</strong>
                       <span>نشان</span>

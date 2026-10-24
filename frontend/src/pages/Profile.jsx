@@ -190,7 +190,7 @@ const Profile = () => {
     <div className="profile-page">
       {/* Cover Photo */}
       <div className="profile-cover" style={{
-        backgroundImage: profile.cover_url ? `url(${profile.cover_url})` : 'linear-gradient(135deg, rgba(0,242,255,0.2), rgba(77,77,255,0.3))'
+        backgroundImage: profile.cover_url ? `url(${profile.cover_url})` : 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(99,102,241,0.3))'
       }}>
         <button className="cover-upload-btn" onClick={() => coverInputRef.current?.click()}>
           <Camera size={20} /> تغییر کاور
@@ -247,7 +247,7 @@ const Profile = () => {
                 <span>{stats?.points || 0} امتیاز</span>
               </div>
               <div className="stat-mini">
-                <Award size={16} color="#00f2ff" />
+                <Award size={16} color="#8b5cf6" />
                 <span>سطح {stats?.level || 1}</span>
               </div>
             </div>
@@ -375,30 +375,30 @@ const Profile = () => {
                     <div className="profile-details">
                       {profile.location && (
                         <div className="detail-item">
-                          <MapPin size={18} color="#00f2ff" />
+                          <MapPin size={18} color="#8b5cf6" />
                           <span>{profile.location}</span>
                         </div>
                       )}
                       {profile.website && (
                         <div className="detail-item">
-                          <Globe size={18} color="#00f2ff" />
+                          <Globe size={18} color="#8b5cf6" />
                           <a href={profile.website} target="_blank" rel="noopener noreferrer">
                             {profile.website}
                           </a>
                         </div>
                       )}
                       <div className="detail-item">
-                        <Mail size={18} color="#00f2ff" />
+                        <Mail size={18} color="#8b5cf6" />
                         <span>{profile.email}</span>
                       </div>
                       {profile.phone && (
                         <div className="detail-item">
-                          <Phone size={18} color="#00f2ff" />
+                          <Phone size={18} color="#8b5cf6" />
                           <span>{profile.phone}</span>
                         </div>
                       )}
                       <div className="detail-item">
-                        <Calendar size={18} color="#00f2ff" />
+                        <Calendar size={18} color="#8b5cf6" />
                         <span>عضو از {new Date(profile.created_at).toLocaleDateString('fa-IR')}</span>
                       </div>
                     </div>

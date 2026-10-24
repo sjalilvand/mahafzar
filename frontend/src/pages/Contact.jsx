@@ -64,21 +64,21 @@ const Contact = () => {
               <h3>اطلاعات تماس</h3>
               <div className="contact-items">
                 <div className="contact-item">
-                  <Phone className="contact-icon" size={24} color="#00f2ff" />
+                  <Phone className="contact-icon" size={24} color="#8b5cf6" />
                   <div>
                     <small>تلفن</small>
                     <strong>۰۲۱-۸۸۸۸۸۸۸۸</strong>
                   </div>
                 </div>
                 <div className="contact-item">
-                  <Mail className="contact-icon" size={24} color="#00f2ff" />
+                  <Mail className="contact-icon" size={24} color="#8b5cf6" />
                   <div>
                     <small>ایمیل</small>
                     <strong>info@mah-afzar.ir</strong>
                   </div>
                 </div>
                 <div className="contact-item">
-                  <MapPin className="contact-icon" size={24} color="#00f2ff" />
+                  <MapPin className="contact-icon" size={24} color="#8b5cf6" />
                   <div>
                     <small>آدرس</small>
                     <strong>تهران، پارک فناوری، ساختمان نوآوری</strong>

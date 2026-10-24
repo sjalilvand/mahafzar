@@ -135,8 +135,8 @@ const AnalyticsDashboard = () => {
       {
         label: 'بازدید',
         data: coursePopularity?.views || [],
-        backgroundColor: 'rgba(0, 242, 255, 0.3)',
-        borderColor: '#00f2ff',
+        backgroundColor: 'rgba(139, 92, 246, 0.3)',
+        borderColor: '#8b5cf6',
         borderWidth: 2,
         borderRadius: 8
       }
@@ -148,9 +148,9 @@ const AnalyticsDashboard = () => {
     datasets: [{
       data: courseCategories?.data || [],
       backgroundColor: [
-        'rgba(0, 242, 255, 0.7)',
-        'rgba(77, 77, 255, 0.7)',
-        'rgba(255, 0, 110, 0.7)',
+        'rgba(139, 92, 246, 0.7)',
+        'rgba(99, 102, 241, 0.7)',
+        'rgba(217, 70, 239, 0.7)',
         'rgba(0, 255, 0, 0.7)',
         'rgba(255, 165, 0, 0.7)',
         'rgba(255, 255, 0, 0.7)'
@@ -165,10 +165,10 @@ const AnalyticsDashboard = () => {
       label: 'کاربران',
       data: userGrowth?.data || [],
       fill: true,
-      backgroundColor: 'rgba(0, 242, 255, 0.1)',
-      borderColor: '#00f2ff',
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+      borderColor: '#8b5cf6',
       tension: 0.4,
-      pointBackgroundColor: '#00f2ff',
+      pointBackgroundColor: '#8b5cf6',
       pointRadius: 4,
       pointHoverRadius: 8
     }]
@@ -184,7 +184,7 @@ const AnalyticsDashboard = () => {
         'rgba(255, 165, 0, 0.5)',
         'rgba(255, 255, 0, 0.5)',
         'rgba(0, 255, 0, 0.5)',
-        'rgba(0, 242, 255, 0.5)'
+        'rgba(139, 92, 246, 0.5)'
       ],
       borderColor: '#fff',
       borderWidth: 1
@@ -196,8 +196,8 @@ const AnalyticsDashboard = () => {
     datasets: [{
       label: 'فعالیت',
       data: hourlyActivity?.data || [],
-      backgroundColor: 'rgba(0, 242, 255, 0.2)',
-      borderColor: '#00f2ff',
+      backgroundColor: 'rgba(139, 92, 246, 0.2)',
+      borderColor: '#8b5cf6',
       borderWidth: 2,
       fill: true
     }]
@@ -207,8 +207,8 @@ const AnalyticsDashboard = () => {
     labels: userActivity.labels,
     datasets: userActivity.datasets.map((ds, i) => ({
       ...ds,
-      backgroundColor: ['rgba(0,242,255,0.3)', 'rgba(77,77,255,0.3)', 'rgba(0,255,0,0.3)', 'rgba(255,165,0,0.3)'][i % 4],
-      borderColor: ['#00f2ff', '#4d4dff', '#0f0', '#ffa500'][i % 4],
+      backgroundColor: ['rgba(139,92,246,0.3)', 'rgba(99,102,241,0.3)', 'rgba(0,255,0,0.3)', 'rgba(255,165,0,0.3)'][i % 4],
+      borderColor: ['#8b5cf6', '#6366f1', '#0f0', '#ffa500'][i % 4],
       borderWidth: 2
     }))
   } : null;
@@ -219,14 +219,14 @@ const AnalyticsDashboard = () => {
       label: 'کاربران',
       value: dashboardStats?.total_stats?.users?.toLocaleString('fa-IR') || 0,
       change: `+${dashboardStats?.new_users?.week || 0} این هفته`,
-      color: '#00f2ff'
+      color: '#8b5cf6'
     },
     {
       icon: <BookOpen size={30} />,
       label: 'دوره‌ها',
       value: dashboardStats?.total_stats?.courses || 0,
       change: 'فعال',
-      color: '#4d4dff'
+      color: '#6366f1'
     },
     {
       icon: <Eye size={30} />,
@@ -245,8 +245,8 @@ const AnalyticsDashboard = () => {
   ];
 
   const myStatCards = [
-    { icon: <MessageSquare size={24} />, label: 'نظرات', value: myStats?.comments || 0, color: '#00f2ff' },
-    { icon: <Award size={24} />, label: 'آزمون‌ها', value: myStats?.quizzes_taken || 0, color: '#4d4dff' },
+    { icon: <MessageSquare size={24} />, label: 'نظرات', value: myStats?.comments || 0, color: '#8b5cf6' },
+    { icon: <Award size={24} />, label: 'آزمون‌ها', value: myStats?.quizzes_taken || 0, color: '#6366f1' },
     { icon: <Activity size={24} />, label: 'فعالیت‌ها', value: myStats?.activities || 0, color: '#0f0' },
     { icon: <Star size={24} />, label: 'میانگین نمره', value: `${myStats?.avg_score || 0}%`, color: '#ffa500' }
   ];

@@ -82,5 +82,8 @@ try:
 except Exception as e:
     logging.error(f"Failed to start server: {str(e)}")
     print(f"❌ Error: {str(e)}")
-    input("Press Enter to exit...")
+    try:
+        input("Press Enter to exit...")
+    except EOFError:
+        pass  # اجرای بدون ترمینال تعاملی
     sys.exit(1)

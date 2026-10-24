@@ -111,7 +111,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-radius: 25px;
   color: var(--primary);
   font-weight: bold;
@@ -148,7 +148,7 @@
 
 .question-points {
   padding: 5px 12px;
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-radius: 15px;
   font-size: 0.85rem;
   color: var(--primary);
@@ -185,12 +185,12 @@
 }
 
 .option-btn:hover {
-  background: rgba(0,242,255,0.05);
-  border-color: rgba(0,242,255,0.3);
+  background: rgba(139,92,246,0.05);
+  border-color: rgba(139,92,246,0.3);
 }
 
 .option-btn.selected {
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-color: var(--primary);
   color: #fff;
 }
@@ -199,7 +199,7 @@
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: rgba(0,242,255,0.15);
+  background: rgba(139,92,246,0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -233,7 +233,7 @@
 }
 
 .nav-btn:hover:not(:disabled) {
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-color: var(--primary);
 }
 

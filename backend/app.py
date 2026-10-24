@@ -48,7 +48,14 @@ def create_app():
     app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
 
     # Database
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///rasa_portal.db')
+    db_url = os.getenv('DATABASE_URL', 'sqlite:///rasa_portal.db')
+    # نگهبان: اگر DATABASE_URL نامعتبر باشد (مثلاً scheme ناشناخته مثل file:/...)
+    # به‌جای کرش کردن کل برنامه، با هشدار به مقدار پیش‌فرض برمی‌گردیم
+    _valid_schemes = ('sqlite:', 'postgresql:', 'postgres:', 'mysql:', 'mssql:', 'oracle:')
+    if not str(db_url).strip().lower().startswith(_valid_schemes):
+        print(f"⚠️ Invalid DATABASE_URL ignored: {db_url!r} → falling back to sqlite")
+        db_url = 'sqlite:///rasa_portal.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Extensions

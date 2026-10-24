@@ -60,7 +60,7 @@
 .user-role {
   display: inline-block;
   padding: 3px 14px;
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-radius: 15px;
   color: var(--primary);
   font-size: 0.8rem;
@@ -117,12 +117,12 @@
 }
 
 .nav-item:hover {
-  background: rgba(0,242,255,0.05);
+  background: rgba(139,92,246,0.05);
   color: #fff;
 }
 
 .nav-item.active {
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   color: var(--primary);
 }
 
@@ -255,7 +255,7 @@
 }
 
 .link-btn:hover {
-  background: rgba(0,242,255,0.05);
+  background: rgba(139,92,246,0.05);
   border-color: var(--primary);
   color: var(--primary);
 }

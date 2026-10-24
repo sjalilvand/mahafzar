@@ -104,7 +104,7 @@ const Navbar = () => {
     <motion.nav className="navbar" initial={{ y: -80 }} animate={{ y: 0 }} transition={{ duration: 0.5 }}>
       <div className="nav-content">
         <Link to="/" className="nav-logo">
-          <Brain className="logo-icon" size={26} color="#00f2ff" />
+          <Brain className="logo-icon" size={26} color="#8b5cf6" />
           <span>{t('app_name', 'ماه‌افزار هوشمند رسا')}</span>
         </Link>
 

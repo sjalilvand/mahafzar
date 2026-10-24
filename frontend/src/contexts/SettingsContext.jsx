@@ -5,11 +5,11 @@ const SettingsContext = createContext();
 const defaultSettings = {
   theme: 'dark',
   customColors: {
-    primary: '#00f2ff',
-    secondary: '#4d4dff',
-    accent: '#ff006e',
-    background: '#0a0a0f',
-    surface: '#0f1423',
+    primary: '#8b5cf6',
+    secondary: '#6366f1',
+    accent: '#d946ef',
+    background: '#0b0917',
+    surface: '#181230',
     text: '#e2e8f0',
     textMuted: '#94a3b8',
     success: '#10b981',
@@ -54,11 +54,11 @@ const predefinedThemes = {
   dark: {
     name: 'تاریک',
     colors: {
-      primary: '#00f2ff',
-      secondary: '#4d4dff',
-      accent: '#ff006e',
-      background: '#0a0a0f',
-      surface: '#0f1423',
+      primary: '#8b5cf6',
+      secondary: '#6366f1',
+      accent: '#d946ef',
+      background: '#0b0917',
+      surface: '#181230',
       text: '#e2e8f0',
       textMuted: '#94a3b8',
     },
@@ -66,10 +66,10 @@ const predefinedThemes = {
   light: {
     name: 'روشن',
     colors: {
-      primary: '#2563eb',
-      secondary: '#7c3aed',
-      accent: '#db2777',
-      background: '#f8fafc',
+      primary: '#7c3aed',
+      secondary: '#6366f1',
+      accent: '#d946ef',
+      background: '#f6f7fb',
       surface: '#ffffff',
       text: '#1e293b',
       textMuted: '#64748b',
@@ -188,10 +188,17 @@ export const SettingsProvider = ({ children }) => {
 
     // Set body class (use font.name which is now guaranteed)
     const fontName = s.font.name ? s.font.name.toLowerCase() : 'vazir';
-    document.body.className = `theme-${s.theme} font-${fontName} density-${s.density}`;
+    // تم از منبع واحد می‌آید: ThemeSwitcher آن را در localStorage.theme ذخیره می‌کند
+    // تا دو سیستم تم (SettingsContext و ThemeContext) با هم نجنگند
+    let uiTheme = s.theme;
+    try {
+      const lsTheme = localStorage.getItem('theme');
+      if (lsTheme && predefinedThemes[lsTheme]) uiTheme = lsTheme;
+    } catch (e) { /* noop */ }
+    document.body.className = `theme-${uiTheme} font-${fontName} density-${s.density}`;
 
-    // Save
-    localStorage.setItem('app_settings', JSON.stringify(s));
+    // Save (تم واقعی اعمال‌شده ذخیره شود تا بعد از رفرش هم درست بماند)
+    localStorage.setItem('app_settings', JSON.stringify({ ...s, theme: uiTheme }));
   };
 
   const updateSettings = useCallback((newSettings) => {

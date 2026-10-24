@@ -64,7 +64,7 @@
 }
 
 .settings-tab.active {
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   color: var(--color-primary);
 }
 
@@ -220,7 +220,7 @@
 
 .font-card.active {
   border-color: var(--color-primary);
-  background: rgba(0,242,255,0.05);
+  background: rgba(139,92,246,0.05);
 }
 
 .font-sample {

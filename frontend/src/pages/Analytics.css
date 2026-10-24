@@ -73,7 +73,7 @@
 
 .btn-refresh:hover,
 .btn-export:hover {
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-color: var(--primary);
 }
 
@@ -211,7 +211,7 @@
 
 .pass-rate {
   padding: 5px 12px;
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-radius: 15px;
   font-size: 0.85rem;
   color: var(--primary);
@@ -251,7 +251,7 @@
 }
 
 .top-user-item:hover {
-  background: rgba(0,242,255,0.05);
+  background: rgba(139,92,246,0.05);
 }
 
 .rank {

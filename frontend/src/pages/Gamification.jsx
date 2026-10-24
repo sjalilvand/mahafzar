@@ -77,7 +77,7 @@ const Gamification = () => {
 
   const rarityColors = {
     common: '#94a3b8',
-    rare: '#4d4dff',
+    rare: '#6366f1',
     epic: '#a855f7',
     legendary: '#f59e0b'
   };
@@ -213,7 +213,7 @@ const Gamification = () => {
               <span>XP</span>
             </div>
             <div className="stat-item">
-              <Award size={20} color="#00f2ff" />
+              <Award size={20} color="#8b5cf6" />
               <strong>{myStats.badges.earned}/{myStats.badges.total}</strong>
               <span>نشان</span>
             </div>
@@ -411,7 +411,7 @@ const Gamification = () => {
                       <span>امتیاز کل</span>
                     </div>
                     <div className="overview-stat">
-                      <Award size={24} color="#00f2ff" />
+                      <Award size={24} color="#8b5cf6" />
                       <strong>{myStats?.badges.earned}</strong>
                       <span>نشان</span>
                     </div>
@@ -421,7 +421,7 @@ const Gamification = () => {
                       <span>دستاورد</span>
                     </div>
                     <div className="overview-stat">
-                      <TrendingUp size={24} color="#4d4dff" />
+                      <TrendingUp size={24} color="#6366f1" />
                       <strong>#{leaderboard.findIndex(l => l.user_id === parseInt(l.user_id)) + 1 || '-'}</strong>
                       <span>رتبه</span>
                     </div>

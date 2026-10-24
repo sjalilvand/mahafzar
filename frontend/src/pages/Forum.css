@@ -75,14 +75,14 @@
 }
 
 .cat-btn:hover, .cat-btn.active {
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-color: var(--primary);
   color: #fff;
 }
 
 .cat-count {
   padding: 2px 8px;
-  background: rgba(0,242,255,0.15);
+  background: rgba(139,92,246,0.15);
   border-radius: 12px;
   font-size: 0.8rem;
 }
@@ -137,7 +137,7 @@
 }
 
 .sort-buttons button.active {
-  background: rgba(0,242,255,0.1);
+  background: rgba(139,92,246,0.1);
   border-color: var(--primary);
   color: var(--primary);
 }
@@ -621,7 +621,7 @@
 }
 
 .tag-item:hover {
-  background: rgba(0,242,255,0.05);
+  background: rgba(139,92,246,0.05);
 }
 
 .tag-item span {

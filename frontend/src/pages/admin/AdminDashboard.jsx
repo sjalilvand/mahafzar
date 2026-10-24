@@ -46,11 +46,11 @@ const AdminDashboard = () => {
   };
 
   const statCards = [
-    { label: 'کاربران', value: stats?.total_users || 0, icon: <Users size={30} />, color: '#00f2ff' },
-    { label: 'اعضا', value: stats?.total_members || 0, icon: <UserPlus size={30} />, color: '#4d4dff' },
+    { label: 'کاربران', value: stats?.total_users || 0, icon: <Users size={30} />, color: '#8b5cf6' },
+    { label: 'اعضا', value: stats?.total_members || 0, icon: <UserPlus size={30} />, color: '#6366f1' },
     { label: 'آموزش‌ها', value: stats?.total_courses || 0, icon: <BookOpen size={30} />, color: '#0f0' },
     { label: 'نظرات', value: stats?.total_comments || 0, icon: <MessageSquare size={30} />, color: '#ffa500' },
-    { label: 'بازخوردها', value: stats?.total_suggestions || 0, icon: <FileText size={30} />, color: '#ff006e' },
+    { label: 'بازخوردها', value: stats?.total_suggestions || 0, icon: <FileText size={30} />, color: '#d946ef' },
     { label: 'بازدیدها', value: stats?.total_views || 0, icon: <Eye size={30} />, color: '#ff0' },
   ];
 

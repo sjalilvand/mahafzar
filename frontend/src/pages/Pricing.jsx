@@ -68,8 +68,8 @@ const Pricing = () => {
   };
 
   const planColors = {
-    basic: '#4d4dff',
-    pro: '#00f2ff',
+    basic: '#6366f1',
+    pro: '#8b5cf6',
     enterprise: '#ffd700'
   };
 
@@ -109,7 +109,7 @@ const Pricing = () => {
               </div>
             )}
 
-            <div className="plan-icon" style={{ color: planColors[plan.name.toLowerCase()] || '#00f2ff' }}>
+            <div className="plan-icon" style={{ color: planColors[plan.name.toLowerCase()] || '#8b5cf6' }}>
               {planIcons[plan.name.toLowerCase()] || <Zap size={40} />}
             </div>
 
